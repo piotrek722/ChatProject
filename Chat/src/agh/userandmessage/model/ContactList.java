@@ -2,6 +2,7 @@ package agh.userandmessage.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * Created by Peter on 2015-11-20.
@@ -17,9 +18,7 @@ public class ContactList implements Serializable {
 
     public ContactList(Contact... contacts){
         this();
-        for(Contact contact: contacts){
-            this.contacts.add(contact);
-        }
+        Collections.addAll(this.contacts, contacts);
     }
 
     public ContactList(ArrayList<Contact> contacts) {

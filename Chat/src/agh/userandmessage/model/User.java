@@ -60,26 +60,7 @@ public class User implements Serializable {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
-
-        User user = (User) o;
-
-        if (isOnline() != user.isOnline()) return false;
-        if (getLogin() != null ? !getLogin().equals(user.getLogin()) : user.getLogin() != null) return false;
-        if (getPassword() != null ? !getPassword().equals(user.getPassword()) : user.getPassword() != null)
-            return false;
-        return !(getContactList() != null ? !getContactList().equals(user.getContactList()) : user.getContactList() != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = getLogin() != null ? getLogin().hashCode() : 0;
-        result = 31 * result + (getPassword() != null ? getPassword().hashCode() : 0);
-        result = 31 * result + (getContactList() != null ? getContactList().hashCode() : 0);
-        result = 31 * result + (isOnline() ? 1 : 0);
-        return result;
+    public String toString() {
+        return "User : " + getLogin() + " online : " + isOnline();
     }
 }

@@ -14,6 +14,8 @@ public class ClientGUI extends JFrame  {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setContentPane(mainPanel);
 
+
+
         setSize(600, 400);
         setVisible(true);
     }

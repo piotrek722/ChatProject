@@ -1,5 +1,7 @@
 package agh.core;
 
+import java.net.Socket;
+
 /**
  * Created by P on 22.11.2015.
  */

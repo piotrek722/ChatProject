@@ -12,15 +12,25 @@ public class User implements Serializable {
     private String password;
     private ContactList contactList;
     private boolean online = false;
+    //TODO add Person instead of name and lastName
     private String name;
     private String lastName;
 
     public User(String login, String password, String name, String lastName) {
         this.login = login;
         this.password = password;
-        contactList = new ContactList();
         this.name = name;
         this.lastName = lastName;
+        contactList = new ContactList();
+    }
+
+    public User(String login, String password, boolean online, String name, String lastName) {
+        this.login = login;
+        this.password = password;
+        this.online = online;
+        this.name = name;
+        this.lastName = lastName;
+        contactList = new ContactList();
     }
 
     public String getLogin() {

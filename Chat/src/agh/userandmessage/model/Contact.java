@@ -18,6 +18,12 @@ public class Contact implements Serializable {
         this.lastName = lastName;
     }
 
+    public Contact(User user){
+        this.login = user.getLogin();
+        this.name = user.getName();
+        this.lastName = user.getLastName();
+    }
+
     public String getLogin() {
         return login;
     }

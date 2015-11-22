@@ -54,6 +54,30 @@ public class Message implements Serializable{
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Message)) return false;
+
+        Message message = (Message) o;
+
+        if (getContent() != null ? !getContent().equals(message.getContent()) : message.getContent() != null)
+            return false;
+        if (getDate() != null ? !getDate().equals(message.getDate()) : message.getDate() != null) return false;
+        if (getSender() != null ? !getSender().equals(message.getSender()) : message.getSender() != null) return false;
+        return !(getReceiver() != null ? !getReceiver().equals(message.getReceiver()) : message.getReceiver() != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getContent() != null ? getContent().hashCode() : 0;
+        result = 31 * result + (getDate() != null ? getDate().hashCode() : 0);
+        result = 31 * result + (getSender() != null ? getSender().hashCode() : 0);
+        result = 31 * result + (getReceiver() != null ? getReceiver().hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Message{" +
                 "content='" + content + '\'' +

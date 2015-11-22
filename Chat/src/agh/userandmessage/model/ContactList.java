@@ -23,6 +23,8 @@ public class ContactList extends ArrayList<Contact> implements Serializable {
         super(c);
     }
 
+    public ContactList() {}
+
     public void add(Contact... contacts) {
         Collections.addAll(this, contacts);
     }

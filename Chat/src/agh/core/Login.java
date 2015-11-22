@@ -18,6 +18,13 @@ public class Login extends JDialog {
         setSize(300,300);
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
+        buttonSignIn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                onSignIn();
+            }
+        });
+
         buttonSignUp.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

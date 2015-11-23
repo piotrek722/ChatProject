@@ -29,7 +29,7 @@
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
             <properties>
-              <text value="You already have an account?"/>
+              <text value="Already have an account?"/>
             </properties>
           </component>
         </children>
@@ -65,6 +65,7 @@
               </grid>
             </constraints>
             <properties>
+              <labelFor value="1e564"/>
               <text value="Login"/>
             </properties>
           </component>
@@ -75,6 +76,7 @@
               </grid>
             </constraints>
             <properties>
+              <labelFor value="9354"/>
               <text value="Password"/>
             </properties>
           </component>
@@ -85,6 +87,7 @@
               </grid>
             </constraints>
             <properties>
+              <labelFor value="2d17f"/>
               <text value="First name"/>
             </properties>
           </component>
@@ -95,6 +98,7 @@
               </grid>
             </constraints>
             <properties>
+              <labelFor value="47fa8"/>
               <text value="Last name"/>
             </properties>
           </component>

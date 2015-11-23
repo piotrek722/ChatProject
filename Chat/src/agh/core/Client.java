@@ -1,7 +1,5 @@
 package agh.core;
 
-import agh.userandmessage.model.Message;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -26,7 +24,7 @@ public class Client {
         this.port = port;
     }
 
-    public void start(){
+    public void start() {
         new Login().setVisible(true);
 
         // THINGS TO DO AFTER LOGIN
@@ -53,7 +51,7 @@ public class Client {
         //Listen Thread
         new ListenFromServer().start();
 
-        //Login?
+        //Login
         try {
             objectOutputStream.writeObject("USER NAME");
         } catch (IOException e) {
@@ -65,8 +63,8 @@ public class Client {
         clientGUI.append(msg);
     }
 
-    private void sendMessage(Message msg) {
-        try{
+    public void sendMessage(String msg) {
+        try {
             objectOutputStream.writeObject(msg);
         } catch (IOException e) {
             return;
@@ -74,25 +72,25 @@ public class Client {
     }
 
     public static void main(String args[]) {
-        Client client = new Client(new ClientGUI(), "localhost", 1000);
+        ClientGUI clientGUI = new ClientGUI();
+        Client client = new Client(clientGUI, "localhost", 1000);
+        clientGUI.setClient(client);
         client.start();
-
-
     }
+
     class ListenFromServer extends Thread {
         public void run() {
-            while(true) {
+            while (true) {
                 try {
                     String msg = (String) objectInputStream.readObject();
                     clientGUI.append(msg);
-                } catch(IOException e) {
+                } catch (IOException e) {
                     display("Server has close the connection: " + e);
                     //if(clientGUI != null) cg.connectionFailed();
                     break;
-                } catch(ClassNotFoundException e2) {
-
-                }
+                } catch (ClassNotFoundException e2) {
                 }
             }
         }
     }
+}

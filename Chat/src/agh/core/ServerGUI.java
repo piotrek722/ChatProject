@@ -1,14 +1,10 @@
 package agh.core;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-
 
 public class ServerGUI extends JFrame {
     private JPanel mainPanel;
-    private JButton broadcastButton;
+    private JButton sendButton;
     private JTextField textField;
     private JList userList;
     private JTextArea textArea;
@@ -20,6 +16,10 @@ public class ServerGUI extends JFrame {
 
         setSize(600, 400);
         setVisible(true);
+    }
+
+    public void append(String msg) {
+        textArea.append(msg + "\n");
     }
 
 }

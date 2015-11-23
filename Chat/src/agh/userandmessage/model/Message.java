@@ -2,6 +2,7 @@ package agh.userandmessage.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by Peter on 2015-11-21.
@@ -12,13 +13,13 @@ public class Message implements Serializable{
     private String content;
     private Date date;
     private User sender;
-    private User receiver;
+    private List<Contact> receivers;
 
-    public Message(String content, Date date, User sender, User receiver) {
+    public Message(String content, Date date, User sender, List<Contact> receivers) {
         this.content = content;
         this.date = date;
         this.sender = sender;
-        this.receiver = receiver;
+        this.receivers = receivers;
     }
 
     public String getContent() {
@@ -45,12 +46,12 @@ public class Message implements Serializable{
         this.sender = sender;
     }
 
-    public User getReceiver() {
-        return receiver;
+    public List<Contact> getReceivers() {
+        return receivers;
     }
 
-    public void setReceiver(User receiver) {
-        this.receiver = receiver;
+    public void setReceivers(List<Contact> receivers) {
+        this.receivers = receivers;
     }
 
     @Override
@@ -64,7 +65,7 @@ public class Message implements Serializable{
             return false;
         if (getDate() != null ? !getDate().equals(message.getDate()) : message.getDate() != null) return false;
         if (getSender() != null ? !getSender().equals(message.getSender()) : message.getSender() != null) return false;
-        return !(getReceiver() != null ? !getReceiver().equals(message.getReceiver()) : message.getReceiver() != null);
+        return !(getReceivers() != null ? !getReceivers().equals(message.getReceivers()) : message.getReceivers() != null);
 
     }
 
@@ -73,7 +74,7 @@ public class Message implements Serializable{
         int result = getContent() != null ? getContent().hashCode() : 0;
         result = 31 * result + (getDate() != null ? getDate().hashCode() : 0);
         result = 31 * result + (getSender() != null ? getSender().hashCode() : 0);
-        result = 31 * result + (getReceiver() != null ? getReceiver().hashCode() : 0);
+        result = 31 * result + (getReceivers() != null ? getReceivers().hashCode() : 0);
         return result;
     }
 
@@ -83,7 +84,7 @@ public class Message implements Serializable{
                 "content='" + content + '\'' +
                 ", date=" + date +
                 ", sender=" + sender +
-                ", receiver=" + receiver +
+                ", receivers=" + receivers +
                 '}';
     }
 }

@@ -16,6 +16,6 @@ public class AddUserCommand implements Command {
 
     @Override
     public void execute() {
-
+        //adding user to database
     }
 }

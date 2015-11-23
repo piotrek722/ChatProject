@@ -13,13 +13,13 @@ public class Message implements Serializable{
     private String content;
     private Date date;
     private User sender;
-    private List<Contact> receivers;
+    private ContactList receivers;
 
-    public Message(String content, Date date, User sender, List<Contact> receivers) {
+    public Message(String content, Date date, User sender, ContactList receivers) {
         this.content = content;
         this.date = date;
         this.sender = sender;
-        this.receivers = receivers;
+        this.receivers = new ContactList(receivers);
     }
 
     public String getContent() {
@@ -50,7 +50,7 @@ public class Message implements Serializable{
         return receivers;
     }
 
-    public void setReceivers(List<Contact> receivers) {
+    public void setReceivers(ContactList receivers) {
         this.receivers = receivers;
     }
 

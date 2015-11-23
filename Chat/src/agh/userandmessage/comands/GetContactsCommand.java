@@ -10,7 +10,7 @@ public class GetContactsCommand implements  Command {
     public ContactList contacts;
 
     public GetContactsCommand(ContactList contacts) {
-        this.contacts=contacts;
+        this.contacts= new ContactList(contacts);
     }
 
     @Override

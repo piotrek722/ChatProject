@@ -15,8 +15,8 @@ public class GetPastConversationsCommand implements Command {
 
     public GetPastConversationsCommand(User user, ContactList contacts, Conversation conversation) {
         this.user=user;
-        this.contacts=contacts;
-        this.conversation=conversation;
+        this.contacts= new ContactList(contacts);
+        this.conversation= new Conversation(conversation);
     }
 
     @Override

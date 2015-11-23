@@ -29,7 +29,10 @@ public class ClientGUI extends JFrame  {
         setSize(600, 400);
         setVisible(true);
     }
-
+    /**
+     * Method appends message to the textArea
+     * @param msg Message to append
+     */
     public void append(String msg) {
         textAreaStart.append(msg + "\n");
     }
@@ -38,6 +41,9 @@ public class ClientGUI extends JFrame  {
         this.client = client;
     }
 
+    /**
+     * Method sends message which is in textField to server.
+     */
     private void onSend() {
         String msg = textField.getText();
         textField.setText("");

@@ -78,15 +78,18 @@ public class Client {
         client.start();
     }
 
+    /**
+     * Tread is just listening the Server
+     */
     class ListenFromServer extends Thread {
         public void run() {
             while (true) {
                 try {
                     String msg = (String) objectInputStream.readObject();
+                    //Should appear in particular Tab
                     clientGUI.append(msg);
                 } catch (IOException e) {
                     display("Server has close the connection: " + e);
-                    //if(clientGUI != null) cg.connectionFailed();
                     break;
                 } catch (ClassNotFoundException e2) {
                 }

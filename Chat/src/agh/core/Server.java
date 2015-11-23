@@ -4,14 +4,13 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class Server {
-    private final int port = 1000;
-    private static int uniqueId = 0;
+    private final int port = 1000; //Server port
+    private static int uniqueId = 0; //unique ID for Client threads
     private ServerGUI serverGUI;
     private ArrayList<ClientThread> clientThreadList;
     private SimpleDateFormat simpleDateFormat;
@@ -29,6 +28,7 @@ public class Server {
         try {
             serverSocket = new ServerSocket(port);
             while (keepGoing) {
+                //Accept new connection and add client to online list.
                 Socket socket = serverSocket.accept();
                 ClientThread clientThread = new ClientThread(socket);
                 clientThreadList.add(clientThread);
@@ -41,13 +41,31 @@ public class Server {
 
     }
 
+    /**
+     * Method display message on ServerGUI's text area.
+     * @param msg Message to display.
+     */
     public void display(String msg) {
         String time = simpleDateFormat.format(new Date()) + ": " + msg;
         serverGUI.append(time);
     }
 
+    /**
+     * Method sends message to all users in clientThreadList.
+     * @param msg Message to send.
+     */
+    //Should show in MainPane of ClientGUI.
+    public void broadcast(String msg) {
+        String time = simpleDateFormat.format(new Date());
+        for (ClientThread client : clientThreadList){
+            client.writeMsg(time + ": " + msg);
+        }
+    }
+
     public static void main(String args[]) {
-        Server server = new Server(new ServerGUI());
+        ServerGUI serverGUI = new ServerGUI();
+        Server server = new Server(serverGUI);
+        serverGUI.setServer(server);
         server.start();
     }
 
@@ -68,8 +86,10 @@ public class Server {
             try {
                 this.objectOutputStream = new ObjectOutputStream(socket.getOutputStream());
                 this.objectInputStream = new ObjectInputStream(socket.getInputStream());
+                //Will be type of Message?
                 username = (String) objectInputStream.readObject();
                 display(username +  " has just connected");
+                serverGUI.addClientToJList(username);
             } catch (Exception e) {
                 display("CREATING DATA STREAM ERROR: " + e);
                 return;
@@ -79,11 +99,27 @@ public class Server {
             String msg;
             while (keepGoing) {
                 try {
+                    //Will be type of Message
                     msg = (String) objectInputStream.readObject();
                 } catch (Exception e) {
                     break;
                 }
+                //Should appear in particular TabPane
                 display(username + "> " + msg);
+            }
+        }
+
+        public void writeMsg(String msg) {
+            if (!socket.isConnected()) {
+                display("USER: " + username + " is offline");
+                return;
+            }
+            try {
+                //Will be type of Message
+                objectOutputStream.writeObject(msg);
+            } catch (Exception e) {
+                display("Error sending message to: " + username);
+                return;
             }
         }
     }

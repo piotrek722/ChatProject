@@ -2,6 +2,7 @@ package agh;
 
 import agh.userandmessage.comands.AddContactCommand;
 import agh.userandmessage.comands.AddUserCommand;
+import agh.userandmessage.comands.Command;
 import agh.userandmessage.model.Contact;
 import agh.userandmessage.model.User;
 
@@ -19,22 +20,24 @@ public class ServerMain {
         Contact contact1 = new Contact(user1);
         user.getContactList().add(contact,contact1);
 
-        //Commands
+        //Commands from Client to Server
 
         AddUserCommand addUserCommand = new AddUserCommand(user);
-        addUserCommand.execute();
+        receiveAsObject(addUserCommand);
         addUserCommand = new AddUserCommand(user1);
-        addUserCommand.execute();
+        receiveAsObject(addUserCommand);
 
         AddContactCommand addContactCommand = new AddContactCommand(user,contact);
-        addContactCommand.execute();
+        receiveAsObject(addContactCommand);
         addContactCommand = new AddContactCommand(user,contact1);
-        addContactCommand.execute();
-
-
-
-
-
+        receiveAsObject(addContactCommand);
 
     }
+
+    public static void receiveAsObject(Object o){
+        //we will receive it from ObjectStreamInput as Object
+        Command c = (Command) o;
+        c.execute();
+    }
+
 }

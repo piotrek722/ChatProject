@@ -1,5 +1,8 @@
 package agh.userandmessage.comands;
 
+import agh.userandmessage.database.controllers.ContactCsvController;
+import agh.userandmessage.database.controllers.UserCsvController;
+import agh.userandmessage.model.Contact;
 import agh.userandmessage.model.User;
 
 /**
@@ -16,6 +19,7 @@ public class AddUserCommand implements Command {
 
     @Override
     public void execute() {
-        //adding user to database
+        UserCsvController.saveUser(userToAdd);
+        ContactCsvController.saveContact(new Contact(userToAdd));
     }
 }

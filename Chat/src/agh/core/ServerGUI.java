@@ -3,6 +3,8 @@ package agh.core;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 public class ServerGUI extends JFrame {
     private JPanel mainPanel;
@@ -24,6 +26,17 @@ public class ServerGUI extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 onSend();
             }
+        });
+
+        textField.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                if (e.getKeyChar() == '\n') onSend();
+            }
+            @Override
+            public void keyPressed(KeyEvent e) {}
+            @Override
+            public void keyReleased(KeyEvent e) {}
         });
 
         setSize(600, 400);

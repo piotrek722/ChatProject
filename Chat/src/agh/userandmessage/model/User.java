@@ -11,8 +11,6 @@ public class User implements Serializable {
     private String login;
     private String password;
     private ContactList contactList;
-    private boolean online = false;
-    //TODO add Person instead of name and lastName
     private String name;
     private String lastName;
 
@@ -27,7 +25,6 @@ public class User implements Serializable {
     public User(String login, String password, boolean online, String name, String lastName) {
         this.login = login;
         this.password = password;
-        this.online = online;
         this.name = name;
         this.lastName = lastName;
         contactList = new ContactList();
@@ -57,14 +54,6 @@ public class User implements Serializable {
         this.contactList = contactList;
     }
 
-    public boolean isOnline() {
-        return online;
-    }
-
-    public void setOnline(boolean online) {
-        this.online = online;
-    }
-
     public String getName() {
         return name;
     }
@@ -88,7 +77,13 @@ public class User implements Serializable {
 
         User user = (User) o;
 
-        return isOnline() == user.isOnline() && !(getLogin() != null ? !getLogin().equals(user.getLogin()) : user.getLogin() != null) && !(getPassword() != null ? !getPassword().equals(user.getPassword()) : user.getPassword() != null) && !(getContactList() != null ? !getContactList().equals(user.getContactList()) : user.getContactList() != null) && !(getName() != null ? !getName().equals(user.getName()) : user.getName() != null) && !(getLastName() != null ? !getLastName().equals(user.getLastName()) : user.getLastName() != null);
+        if (getLogin() != null ? !getLogin().equals(user.getLogin()) : user.getLogin() != null) return false;
+        if (getPassword() != null ? !getPassword().equals(user.getPassword()) : user.getPassword() != null)
+            return false;
+        if (getContactList() != null ? !getContactList().equals(user.getContactList()) : user.getContactList() != null)
+            return false;
+        if (getName() != null ? !getName().equals(user.getName()) : user.getName() != null) return false;
+        return !(getLastName() != null ? !getLastName().equals(user.getLastName()) : user.getLastName() != null);
 
     }
 
@@ -97,19 +92,9 @@ public class User implements Serializable {
         int result = getLogin() != null ? getLogin().hashCode() : 0;
         result = 31 * result + (getPassword() != null ? getPassword().hashCode() : 0);
         result = 31 * result + (getContactList() != null ? getContactList().hashCode() : 0);
-        result = 31 * result + (isOnline() ? 1 : 0);
         result = 31 * result + (getName() != null ? getName().hashCode() : 0);
         result = 31 * result + (getLastName() != null ? getLastName().hashCode() : 0);
         return result;
     }
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "login='" + login + '\'' +
-                ", online=" + online +
-                ", name='" + name + '\'' +
-                ", lastName='" + lastName + '\'' +
-                '}';
-    }
 }

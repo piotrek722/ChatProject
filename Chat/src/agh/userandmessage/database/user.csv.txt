@@ -1,4 +1,0 @@
-login,password,online,name,lastName
-"Nick","haslo","false","Ktos","Jakis"
-"user1","haslo","false","Ktos","Jakis"
-"user","haslo","false","Ktos","Jakis"

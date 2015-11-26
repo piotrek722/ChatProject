@@ -46,7 +46,7 @@ public class Message implements Serializable{
         this.sender = sender;
     }
 
-    public List<Contact> getReceivers() {
+    public List<String> getReceivers() {
         return receivers;
     }
 

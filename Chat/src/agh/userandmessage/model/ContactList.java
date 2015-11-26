@@ -9,24 +9,25 @@ import java.util.Collections;
  * Created by Peter on 2015-11-20.
  * Project name : ChatProject
  */
-public class ContactList extends ArrayList<Contact> implements Serializable {
+public class ContactList extends ArrayList<String> implements Serializable {
 
     public ContactList(int initialCapacity) {
         super(initialCapacity);
     }
 
-    public ContactList(Contact... contacts) {
-        Collections.addAll(this,contacts);
-    }
-
-    public ContactList(Collection<? extends Contact> c) {
+    public ContactList(Collection<? extends String> c) {
         super(c);
     }
 
-    public ContactList() {}
+    public ContactList() {
+    }
 
-    public void add(Contact... contacts) {
-        Collections.addAll(this, contacts);
+    public ContactList(String... contacts){
+        Collections.addAll(this,contacts);
+    }
+
+    public void add(String... contacts){
+        Collections.addAll(this,contacts);
     }
 
 }

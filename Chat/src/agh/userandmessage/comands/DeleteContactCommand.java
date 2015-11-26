@@ -1,6 +1,5 @@
 package agh.userandmessage.comands;
 
-import agh.userandmessage.model.Contact;
 import agh.userandmessage.model.User;
 
 /**
@@ -9,9 +8,9 @@ import agh.userandmessage.model.User;
 public class DeleteContactCommand implements Command {
 
     public User user;
-    public Contact contact;
+    public String contact;
 
-    public DeleteContactCommand(User user, Contact contact) {
+    public DeleteContactCommand(User user, String contact) {
         this.user=user;
         this.contact=contact;
     }

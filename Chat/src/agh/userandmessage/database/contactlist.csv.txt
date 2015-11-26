@@ -1,5 +1,0 @@
-userlogin,contactlogin
-"Nick","Nick"
-"Nick","user1"
-"user","user"
-"user","user1"

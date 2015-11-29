@@ -10,6 +10,8 @@ import java.util.Collections;
  * Project name : ChatProject
  */
 public class ContactList extends ArrayList<String> implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
 
     public ContactList(int initialCapacity) {
         super(initialCapacity);

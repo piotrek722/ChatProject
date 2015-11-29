@@ -25,18 +25,25 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		return true;
 	}
 
-	public void deleteContact(User user, String contact) throws RemoteException {
+	public Boolean deleteContact(User user, String contact) throws RemoteException {
+		
+		/* if contact not exist in database:
+		 *		return false;
+		 */
 		ContactList contactList = user.getContactList();
 		contactList.remove(contact);
 		user.setContactList(contactList);
+		return true;
 	}
 
-	public void addUser(User user) throws RemoteException {
+	public Boolean addUser(User user) throws RemoteException {
 		//pass
+		return true;
 	}
 
-	public void deleteUser(User user) throws RemoteException {
+	public Boolean deleteUser(User user) throws RemoteException {
 		//pass
+		return true;
 	}
 
 	public ContactList getContacts(User user) throws RemoteException {

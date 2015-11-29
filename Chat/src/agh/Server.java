@@ -14,10 +14,15 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 	protected Server() throws RemoteException {
 	}
 
-	public void addContact(User user, String contact) throws RemoteException {
+	public Boolean addContact(User user, String contact) throws RemoteException {
+		
+		/* if contact not exist in database:
+		 *		return false;
+		 */
 		ContactList contactList = user.getContactList();
 		contactList.add(contact);
-		user.setContactList(contactList);		
+		user.setContactList(contactList);
+		return true;
 	}
 
 	public void deleteContact(User user, String contact) throws RemoteException {

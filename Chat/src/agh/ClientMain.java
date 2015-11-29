@@ -14,7 +14,7 @@ public class ClientMain {
 
     public static void main(String[] args) {
         String serverURL = "rmi://localhost/RMIServer";
-		ServerInterface server = (ServerInterface) Naming.lookup(serverURL);
-		new Thread(new Client(args[0], server)).start();
+	ServerInterface server = (ServerInterface) Naming.lookup(serverURL);
+	new Thread(new Client(args[0], server)).start();
     }
 }

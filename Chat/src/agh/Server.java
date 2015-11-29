@@ -21,7 +21,9 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 	}
 
 	public void deleteContact(User user, String contact) throws RemoteException {
-		//pass
+		ContactList contactList = user.getContactList();
+		contactList.remove(contact);
+		user.setContactList(contactList);
 	}
 
 	public void addUser(User user) throws RemoteException {
@@ -33,12 +35,11 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 	}
 
 	public ContactList getContacts(User user) throws RemoteException {
-		//pass
-		return null;
+		return user.getContactList();
 	}
 
 	public Conversation getConversations(User user, ContactList contacts) throws RemoteException {
-		//pass
+		//
 		return null;
 	}
 }

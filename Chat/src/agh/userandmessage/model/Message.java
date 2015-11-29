@@ -8,8 +8,9 @@ import java.util.List;
  * Created by Peter on 2015-11-21.
  * Project name : ChatProject
  */
-public class Message implements Serializable{
-
+public class Message implements Serializable {
+    
+    private static final long serialVersionUID = 1L;
     private String content;
     private Date date;
     private User sender;

@@ -12,11 +12,12 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 	private static final long serialVersionUID = 1L;
 
 	protected Server() throws RemoteException {
-		//pass
 	}
 
 	public void addContact(User user, String contact) throws RemoteException {
-		//pass		
+		ContactList contactList = user.getContactList();
+		contactList.add(contact);
+		user.setContactList(contactList);		
 	}
 
 	public void deleteContact(User user, String contact) throws RemoteException {

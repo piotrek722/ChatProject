@@ -1,4 +1,4 @@
-package agh;
+package agh.server;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;

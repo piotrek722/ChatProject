@@ -1,4 +1,4 @@
-package agh;
+package agh.client;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

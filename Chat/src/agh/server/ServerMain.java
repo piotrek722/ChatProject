@@ -1,4 +1,4 @@
-package agh;
+package agh.server;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;

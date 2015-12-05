@@ -1,10 +1,12 @@
-package agh.core;
+package agh.core.server;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 
 public class ServerGUI extends JFrame {
     private JPanel mainPanel;
@@ -16,8 +18,9 @@ public class ServerGUI extends JFrame {
 
     private Server server;
 
-    public ServerGUI() {
+    public ServerGUI() throws RemoteException {
         super("CHAT SERVER");
+        server = new Server();
         setContentPane(mainPanel);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -43,40 +46,37 @@ public class ServerGUI extends JFrame {
         setVisible(true);
     }
 
-    /**
-     * Method appends message to the textArea
-     * @param msg Message to append
-     */
     public void append(String msg) {
         textArea.append(msg + "\n");
     }
 
-    /**
-     * Method adds client, who log in to chat by Client.
-     * @param username User name
-     */
     public void addClientToJList(String username) {
         userOnlineList.addElement(username);
     }
 
-    /**
-     * Method sends message to all online clients
-     * and appends it to server text area.
-     */
     private void onSend() {
         String servermsg = "SERVER> " + textField.getText();
         textField.setText("");
         append(servermsg);
-        server.broadcast(servermsg);
+        //server.broadcast(servermsg);
     }
 
-    public void setServer(Server server) {
-        this.server = server;
+    public Server getServer() {
+        return server;
     }
 
     private void createUIComponents() {
         // TODO: place custom component creation code here
         userOnlineList = new DefaultListModel<>();
         userList = new JList(userOnlineList);
+    }
+
+    public class Server extends UnicastRemoteObject implements IServer {
+        private static final long serialVersionUID = 1L;
+        //List<Clients>
+        public Server() throws RemoteException {
+
+        }
+
     }
 }

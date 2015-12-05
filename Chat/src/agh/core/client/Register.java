@@ -1,4 +1,4 @@
-package agh.core;
+package agh.core.client;
 
 import javax.swing.*;
 import java.awt.event.*;

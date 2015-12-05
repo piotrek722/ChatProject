@@ -1,29 +1,33 @@
-package agh.core;
+package agh.core.client;
+
+import agh.core.server.IServer;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class ClientGUI extends JFrame  {
     private JPanel mainPanel;
     private JList userList;
     private JButton sendButton;
     private JTextField textField;
-    private JTabbedPane tabbedPane1;
+    private JTabbedPane tabbedPane;
     private JTextArea textAreaStart;
     private SimpleDateFormat simpleDateFormat;
 
+    private IServer server;
     private Client client;
 
-    public ClientGUI() {
+    public ClientGUI(IServer server) throws RemoteException {
         super("CHAT");
-        simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.server = server;
+        client = new Client();
         setContentPane(mainPanel);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
 
         sendButton.addActionListener(new ActionListener() {
             @Override
@@ -46,10 +50,7 @@ public class ClientGUI extends JFrame  {
         setSize(600, 400);
         setVisible(true);
     }
-    /**
-     * Method appends message to the textArea
-     * @param msg Message to append
-     */
+
     public void append(String msg) {
         //String time = simpleDateFormat.format(new Date());
         textAreaStart.append(msg + "\n");
@@ -59,13 +60,18 @@ public class ClientGUI extends JFrame  {
         this.client = client;
     }
 
-    /**
-     * Method sends message which is in textField to server.
-     */
     private void onSend() {
         String msg = textField.getText();
         textField.setText("");
         textAreaStart.append(msg);
-        client.sendMessage(msg);
+        //client.sendMessage(msg);
+    }
+
+    public class Client extends UnicastRemoteObject implements IClient{
+        private static final long serialVersionUID = 1L;
+        protected Client() throws RemoteException {
+
+        }
+
     }
 }

@@ -1,12 +1,12 @@
 package agh.core.client;
 
 import agh.core.server.IServer;
-
 import javax.swing.*;
 import java.awt.event.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ClientGUI extends JFrame  {
     private JPanel mainPanel;
@@ -48,12 +48,23 @@ public class ClientGUI extends JFrame  {
             public void keyReleased(KeyEvent e) {}
         });
 
+        Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            public void run() {
+                try {
+                    server.unregisterClient(client);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        }));
+
         setSize(600, 400);
         setVisible(true);
     }
 
     private void onSend() {
-        String msg = textField.getText();
+
+        String msg = simpleDateFormat.format(new Date()) + " " + textField.getText();
         textField.setText("");
         textAreaStart.append(msg);
         try {

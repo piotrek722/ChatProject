@@ -81,6 +81,11 @@ public class ServerGUI extends JFrame {
         }
 
         @Override
+        public void unregisterClient(IClient client) throws RemoteException {
+            this.clients.remove(client);
+        }
+
+        @Override
         public void broadcastMessage(String message) throws RemoteException {
             for (IClient client : clients) {
                 client.retrieveMessage(message);

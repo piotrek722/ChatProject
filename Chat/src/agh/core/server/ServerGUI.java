@@ -1,12 +1,11 @@
 package agh.core.server;
 
+import agh.core.client.IClient;
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 
 public class ServerGUI extends JFrame {
     private JPanel mainPanel;
@@ -46,19 +45,15 @@ public class ServerGUI extends JFrame {
         setVisible(true);
     }
 
-    public void append(String msg) {
-        textArea.append(msg + "\n");
-    }
-
-    public void addClientToJList(String username) {
-        userOnlineList.addElement(username);
-    }
-
     private void onSend() {
         String servermsg = "SERVER> " + textField.getText();
         textField.setText("");
-        append(servermsg);
-        //server.broadcast(servermsg);
+        textArea.append(servermsg + "\n");
+        try {
+            server.broadcastMessage(servermsg);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     public Server getServer() {
@@ -73,10 +68,28 @@ public class ServerGUI extends JFrame {
 
     public class Server extends UnicastRemoteObject implements IServer {
         private static final long serialVersionUID = 1L;
-        //List<Clients>
-        public Server() throws RemoteException {
+        ArrayList<IClient> clients;
 
+        public Server() throws RemoteException {
+            clients = new ArrayList<>();
         }
 
+        @Override
+        public void registerClient(IClient client) throws RemoteException {
+            this.clients.add(client);
+            userOnlineList.addElement("Client_");
+        }
+
+        @Override
+        public void broadcastMessage(String message) throws RemoteException {
+            for (IClient client : clients) {
+                client.retrieveMessage(message);
+            }
+        }
+
+        @Override
+        public void retrieveMessage(String message) throws RemoteException {
+            textArea.append(message);
+        }
     }
 }

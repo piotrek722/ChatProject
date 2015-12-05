@@ -9,8 +9,8 @@ import java.rmi.RemoteException;
 
 public class ClientDriver {
     public static void main(String args[]) throws RemoteException, NotBoundException, MalformedURLException {
-        String serverUrl = "rmi://localhost/RMIChatServer";
-        IServer chatServer = (IServer) Naming.lookup(serverUrl);
-        new ClientGUI(chatServer);
+        String serverUrl = "//localhost/RMIChatServer";
+        IServer server = (IServer) Naming.lookup(serverUrl);
+        new ClientGUI(server);
     }
 }

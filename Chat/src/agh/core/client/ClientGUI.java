@@ -23,7 +23,8 @@ public class ClientGUI extends JFrame  {
     public ClientGUI(IServer server) throws RemoteException {
         super("CHAT");
         this.server = server;
-        client = new Client();
+        this.client = new Client();
+
         setContentPane(mainPanel);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
@@ -51,27 +52,26 @@ public class ClientGUI extends JFrame  {
         setVisible(true);
     }
 
-    public void append(String msg) {
-        //String time = simpleDateFormat.format(new Date());
-        textAreaStart.append(msg + "\n");
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
     private void onSend() {
         String msg = textField.getText();
         textField.setText("");
         textAreaStart.append(msg);
-        //client.sendMessage(msg);
+        try {
+            server.retrieveMessage(msg);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     public class Client extends UnicastRemoteObject implements IClient{
         private static final long serialVersionUID = 1L;
-        protected Client() throws RemoteException {
-
+        public Client() throws RemoteException {
+            server.registerClient(this);
         }
 
+        @Override
+        public void retrieveMessage(String message) throws RemoteException {
+            textAreaStart.append(message + "\n");
+        }
     }
 }

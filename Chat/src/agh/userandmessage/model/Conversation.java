@@ -1,34 +1,57 @@
 package agh.userandmessage.model;
 
+import javax.persistence.ElementCollection;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Created by Peter on 2015-11-21.
  * Project name : ChatProject
  */
-public class Conversation extends ArrayList<Message> implements Serializable {
+public class Conversation  implements Serializable {
     
     private static final long serialVersionUID = 1L;
 
-    public Conversation(int initialCapacity) {
-        super(initialCapacity);
-    }
+    private int conversationId;
+
+    private List<Message> messages = new ArrayList<>();
 
     public Conversation() {
     }
 
-    public Conversation(Message... messages) {
-        Collections.addAll(this,messages);
+    public Conversation(List<Message> messages) {
+        this.messages = messages;
     }
 
-    public Conversation(Collection<? extends Message> c) {
-        super(c);
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
+    }
+
+    public int getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(int conversationId) {
+        this.conversationId = conversationId;
+    }
+
+    public Conversation(Message... messages) {
+        Collections.addAll(this.messages,messages);
     }
 
     public void add(Message... messages){
-        Collections.addAll(this,messages);
+        Collections.addAll(this.messages,messages);
     }
+
+
 }

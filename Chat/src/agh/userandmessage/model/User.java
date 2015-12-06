@@ -1,34 +1,52 @@
 package agh.userandmessage.model;
 
+import org.hibernate.annotations.Cascade;
+
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Peter on 2015-11-20.
  * Project name : ChatProject
  */
+@Entity
+@Table(name="User")
 public class User implements Serializable {
-    
+
     private static final long serialVersionUID = 1L;
+
+    @Id
+    @Column(name = "login")
     private String login;
+
+    @Column(name = "password")
     private String password;
-    private ContactList contactList;
+
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name="ContactList",
+                joinColumns = @JoinColumn(name = "login"),
+                inverseJoinColumns = @JoinColumn(name = "contact"))
+    private List<User> contactList = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "contactList")
+    private List<User> contactOf = new ArrayList<>();
+
+    @Column(name = "name")
     private String name;
+
+    @Column(name = "lastName")
     private String lastName;
+
+    public User() {
+    }
 
     public User(String login, String password, String name, String lastName) {
         this.login = login;
         this.password = password;
         this.name = name;
         this.lastName = lastName;
-        contactList = new ContactList();
-    }
-
-    public User(String login, String password, boolean online, String name, String lastName) {
-        this.login = login;
-        this.password = password;
-        this.name = name;
-        this.lastName = lastName;
-        contactList = new ContactList();
     }
 
     public String getLogin() {
@@ -47,12 +65,20 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public ContactList getContactList() {
+    public List<User> getContactList() {
         return contactList;
     }
 
-    public void setContactList(ContactList contactList) {
+    public void setContactList(List<User> contactList) {
         this.contactList = contactList;
+    }
+
+    public List<User> getContactOf() {
+        return contactOf;
+    }
+
+    public void setContactOf(List<User> contactOf) {
+        this.contactOf = contactOf;
     }
 
     public String getName() {
@@ -70,32 +96,4 @@ public class User implements Serializable {
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User)) return false;
-
-        User user = (User) o;
-
-        if (getLogin() != null ? !getLogin().equals(user.getLogin()) : user.getLogin() != null) return false;
-        if (getPassword() != null ? !getPassword().equals(user.getPassword()) : user.getPassword() != null)
-            return false;
-        if (getContactList() != null ? !getContactList().equals(user.getContactList()) : user.getContactList() != null)
-            return false;
-        if (getName() != null ? !getName().equals(user.getName()) : user.getName() != null) return false;
-        return !(getLastName() != null ? !getLastName().equals(user.getLastName()) : user.getLastName() != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = getLogin() != null ? getLogin().hashCode() : 0;
-        result = 31 * result + (getPassword() != null ? getPassword().hashCode() : 0);
-        result = 31 * result + (getContactList() != null ? getContactList().hashCode() : 0);
-        result = 31 * result + (getName() != null ? getName().hashCode() : 0);
-        result = 31 * result + (getLastName() != null ? getLastName().hashCode() : 0);
-        return result;
-    }
-
 }

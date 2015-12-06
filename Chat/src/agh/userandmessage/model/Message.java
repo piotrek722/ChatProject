@@ -1,6 +1,9 @@
 package agh.userandmessage.model;
 
+import javax.persistence.*;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -8,19 +11,56 @@ import java.util.List;
  * Created by Peter on 2015-11-21.
  * Project name : ChatProject
  */
+
+@Entity
+@Table(name = "Message")
 public class Message implements Serializable {
     
     private static final long serialVersionUID = 1L;
-    private String content;
-    private Date date;
-    private User sender;
-    private ContactList receivers;
 
-    public Message(String content, Date date, User sender, ContactList receivers) {
+    @Id
+    @GeneratedValue
+    private int messageId;
+
+    @Column(name = "content")
+    private String content;
+
+    @Column(name = "date")
+    private Date date;
+
+    @OneToOne
+    @JoinColumn(name = "senderId")
+    private User sender;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "Receivers",
+            joinColumns = @JoinColumn(name = "messageId"),
+            inverseJoinColumns = @JoinColumn(name = "receiverId"))
+    private List<User> receivers = new ArrayList<>();
+
+    public Message() {
+    }
+
+    public Message(String content, Date date, User sender, List<User> receivers) {
         this.content = content;
         this.date = date;
         this.sender = sender;
-        this.receivers = new ContactList(receivers);
+        this.receivers = receivers;
+    }
+
+    public Message(String content, Date date, User sender, User... receivers) {
+        this.content = content;
+        this.date = date;
+        this.sender = sender;
+        this.receivers = Arrays.asList(receivers);
+    }
+
+    public int getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(int messageId) {
+        this.messageId = messageId;
     }
 
     public String getContent() {
@@ -47,45 +87,12 @@ public class Message implements Serializable {
         this.sender = sender;
     }
 
-    public List<String> getReceivers() {
+    public List<User> getReceivers() {
         return receivers;
     }
 
-    public void setReceivers(ContactList receivers) {
+    public void setReceivers(List<User> receivers) {
         this.receivers = receivers;
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Message)) return false;
-
-        Message message = (Message) o;
-
-        if (getContent() != null ? !getContent().equals(message.getContent()) : message.getContent() != null)
-            return false;
-        if (getDate() != null ? !getDate().equals(message.getDate()) : message.getDate() != null) return false;
-        if (getSender() != null ? !getSender().equals(message.getSender()) : message.getSender() != null) return false;
-        return !(getReceivers() != null ? !getReceivers().equals(message.getReceivers()) : message.getReceivers() != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = getContent() != null ? getContent().hashCode() : 0;
-        result = 31 * result + (getDate() != null ? getDate().hashCode() : 0);
-        result = 31 * result + (getSender() != null ? getSender().hashCode() : 0);
-        result = 31 * result + (getReceivers() != null ? getReceivers().hashCode() : 0);
-        return result;
-    }
-
-    @Override
-    public String toString() {
-        return "Message{" +
-                "content='" + content + '\'' +
-                ", date=" + date +
-                ", sender=" + sender +
-                ", receivers=" + receivers +
-                '}';
-    }
 }
+

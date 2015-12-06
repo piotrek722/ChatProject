@@ -2,8 +2,8 @@ package agh.server;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.List;
 
-import agh.userandmessage.model.ContactList;
 import agh.userandmessage.model.Conversation;
 import agh.userandmessage.model.User;
 
@@ -14,14 +14,17 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 	protected Server() throws RemoteException {
 	}
 
+	@Override
+	public User logIn(String login, String password) throws RemoteException {
+		return null;
+	}
+
 	public Boolean addContact(User user, String contact) throws RemoteException {
 		
 		/* if contact not exist in database:
 		 *		return false;
 		 */
-		ContactList contactList = user.getContactList();
-		contactList.add(contact);
-		user.setContactList(contactList);
+
 		return true;
 	}
 
@@ -30,9 +33,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		/* if contact not exist in database:
 		 *		return false;
 		 */
-		ContactList contactList = user.getContactList();
-		contactList.remove(contact);
-		user.setContactList(contactList);
+
 		return true;
 	}
 
@@ -46,12 +47,13 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		return true;
 	}
 
-	public ContactList getContacts(User user) throws RemoteException {
+	public List<User> getContacts(User user) throws RemoteException {
+		//pass
 		return user.getContactList();
 	}
 
-	public Conversation getConversations(User user, ContactList contacts) throws RemoteException {
-		//
+	public Conversation getConversations(User user, List<User> contacts) throws RemoteException {
+		//pass
 		return null;
 	}
 }

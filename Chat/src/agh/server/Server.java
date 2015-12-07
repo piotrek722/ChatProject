@@ -4,14 +4,33 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 
+import agh.client.ClientInterface;
+
 import agh.userandmessage.model.Conversation;
 import agh.userandmessage.model.User;
 
 public class Server extends UnicastRemoteObject implements ServerInterface {
 
 	private static final long serialVersionUID = 1L;
+	private ArrayList<ClientInterface> clients;
 
 	protected Server() throws RemoteException {
+		clients = new ArrayList<ClientInterface>();
+	}
+	
+	public synchronized void registerClient(ClientInterface client, DefaultListModel<User> userOnlineList) throws RemoteException {
+		this.clients.add(client);
+		userOnlineList.addElement("Client_");
+	}
+
+	public synchronized void unregisterClient(ClientInterface client) throws RemoteException {
+		this.clients.remove(client);
+	}
+
+	public synchronized void broadcastMessage(String message) throws RemoteException {
+		for(ClientInterface client : clients) {
+			client.retrieveMessage();
+		}
 	}
 
 	@Override

@@ -8,6 +8,9 @@ import agh.userandmessage.model.Conversation;
 import agh.userandmessage.model.User;
 
 public interface ServerInterface extends Remote {
+	void registerClient(ClientInterface client) throws RemoteException;
+	void broadcastMessage(String message) throws RemoteException;
+	void unregisterClient(IClient client) throws RemoteException;
 	User logIn(String login, String password) throws RemoteException;
 	Boolean addContact(User user, String contact) throws RemoteException;
 	Boolean deleteContact(User user, String contact) throws RemoteException;

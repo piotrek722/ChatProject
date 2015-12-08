@@ -1,11 +1,10 @@
 package agh.userandmessage.model;
 
+
 import org.hibernate.annotations.Cascade;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by Peter on 2015-11-20.
@@ -24,14 +23,9 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name="ContactList",
-                joinColumns = @JoinColumn(name = "login"),
-                inverseJoinColumns = @JoinColumn(name = "contact"))
-    private List<User> contactList = new ArrayList<>();
-
-    @ManyToMany(mappedBy = "contactList")
-    private List<User> contactOf = new ArrayList<>();
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "contactListId")
+    private ContactList contactList;
 
     @Column(name = "name")
     private String name;
@@ -47,6 +41,7 @@ public class User implements Serializable {
         this.password = password;
         this.name = name;
         this.lastName = lastName;
+        this.contactList = new ContactList();
     }
 
     public String getLogin() {
@@ -65,20 +60,12 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public List<User> getContactList() {
+    public ContactList getContactList() {
         return contactList;
     }
 
-    public void setContactList(List<User> contactList) {
+    public void setContactList(ContactList contactList) {
         this.contactList = contactList;
-    }
-
-    public List<User> getContactOf() {
-        return contactOf;
-    }
-
-    public void setContactOf(List<User> contactOf) {
-        this.contactOf = contactOf;
     }
 
     public String getName() {

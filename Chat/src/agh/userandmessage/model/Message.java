@@ -29,13 +29,13 @@ public class Message implements Serializable {
     private Date date;
 
     @OneToOne
-    @JoinColumn(name = "senderId")
+    @JoinColumn(name = "sender")
     private User sender;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "Receivers",
             joinColumns = @JoinColumn(name = "messageId"),
-            inverseJoinColumns = @JoinColumn(name = "receiverId"))
+            inverseJoinColumns = @JoinColumn(name = "login"))
     private List<User> receivers = new ArrayList<>();
 
     public Message() {

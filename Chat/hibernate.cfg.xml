@@ -17,6 +17,7 @@
     <property name="hbm2ddl.auto">create</property>
 
     <mapping class="agh.userandmessage.model.User"/>
+    <mapping class="agh.userandmessage.model.ContactList"/>
     <mapping class="agh.userandmessage.model.Message"/>
 
   </session-factory>

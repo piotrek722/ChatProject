@@ -17,16 +17,9 @@ import java.util.List;
 public class Conversation  implements Serializable {
     
     private static final long serialVersionUID = 1L;
-
-    private int conversationId;
-
     private List<Message> messages = new ArrayList<>();
 
     public Conversation() {
-    }
-
-    public Conversation(List<Message> messages) {
-        this.messages = messages;
     }
 
     public List<Message> getMessages() {
@@ -36,22 +29,4 @@ public class Conversation  implements Serializable {
     public void setMessages(List<Message> messages) {
         this.messages = messages;
     }
-
-    public int getConversationId() {
-        return conversationId;
-    }
-
-    public void setConversationId(int conversationId) {
-        this.conversationId = conversationId;
-    }
-
-    public Conversation(Message... messages) {
-        Collections.addAll(this.messages,messages);
-    }
-
-    public void add(Message... messages){
-        Collections.addAll(this.messages,messages);
-    }
-
-
 }

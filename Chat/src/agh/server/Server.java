@@ -2,8 +2,9 @@ package agh.server;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -17,10 +18,10 @@ import agh.persistence.HibernateUtils;
 public class Server extends UnicastRemoteObject implements ServerInterface {
 	
 	private static final long serialVersionUID = 1L;
-	private ArrayList<ClientInterface> clients;			// replacing soon
+	private Map<User, ClientInterface> usersOnline;
 
 	protected Server() throws RemoteException {
-		clients = new ArrayList<ClientInterface>();		// not for long
+		usersOnline = new HashMap<User, ClientInterface>();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -66,7 +67,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public User logIn(String login, String password) throws RemoteException {
+	public User login(ClientInterface client, String login, String password) throws RemoteException {
 		Session session = HibernateUtils.getSession();
 		Transaction transaction = session.beginTransaction();
 		User user = null;
@@ -76,6 +77,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		
 		if(!result.isEmpty()) {
 			user = result.get(0);
+			usersOnline.put(user, client);
 		}
 		
 		transaction.commit();

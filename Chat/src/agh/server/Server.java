@@ -2,6 +2,7 @@ package agh.server;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +12,8 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 import agh.client.ClientInterface;
-import agh.userandmessage.model.Conversation;
+import agh.userandmessage.model.ContactList;
+import agh.userandmessage.model.Message;
 import agh.userandmessage.model.User;
 import agh.persistence.HibernateUtils;
 
@@ -27,14 +29,15 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Boolean registerClient(String login, String password, String name, String lastName) throws RemoteException {
+		Boolean isSuccessful = false;
 		Session session = HibernateUtils.getSession();
 		Transaction transaction = session.beginTransaction();
-		Boolean isSuccessful = false;
 		
-		Query query = session.createQuery("select u from User as u where u.login like :login").setParameter("login", login);
-		List<User> result = query.list();
+		String command = "select u from user as u where u.login like :login";
+		Query query = session.createQuery(command).setParameter("login", login);
+		List<User> found = query.list();
 		
-		if(result.isEmpty()) {
+		if(found.isEmpty()) {
 			User user = new User(login, password, name, lastName);
 			session.persist(user);
 			isSuccessful = true;
@@ -48,20 +51,22 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Boolean unregisterClient(User user) throws RemoteException {
+		Boolean isSuccessful = false;
 		Session session = HibernateUtils.getSession();
 		Transaction transaction = session.beginTransaction();
-		Boolean isSuccessful = false;
 		
-		Query query = session.createQuery("select u from User as u where u.login like :login").setParameter("login", user.getLogin());
-		List<User> result = query.list();
-		
-		if(!result.isEmpty()) {
-			session.delete(result.get(0));
-			isSuccessful = true;
-		}
+		String command = "select u from user as u where u.login like :login";
+		Query query = session.createQuery(command).setParameter("login", user.getLogin());
+		List<User> found = query.list();
 		
 		transaction.commit();
 		session.close();
+		
+		if(found.size() == 1) {
+			session.delete(found.get(0));
+			isSuccessful = true;
+		}
+		
 		return isSuccessful;
 	}
 	
@@ -70,59 +75,128 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 	public User login(ClientInterface client, String login, String password) throws RemoteException {
 		Session session = HibernateUtils.getSession();
 		Transaction transaction = session.beginTransaction();
-		User user = null;
 		
-		Query query = session.createQuery("select u from User as u where u.login like :login and u.password like :password").setParameter("login", login).setParameter("password", password);
-		List<User> result = query.list();
-		
-		if(!result.isEmpty()) {
-			user = result.get(0);
-			usersOnline.put(user, client);
-		}
+		String command = "select u from user as u where u.login like :login and u.password like :password";
+		Query query = session.createQuery(command).setParameter("login", login).setParameter("password", password);
+		List<User> found = query.list();
 		
 		transaction.commit();
 		session.close();
+		
+		if(found.isEmpty()) {
+			return null;
+		}
+		
+		User user = found.get(0);
+		
+		if(user != null) {
+			usersOnline.put(user, client);
+		}
+		
 		return user;
 	}
-
+	
 	@Override
-	public void sendMessage(String message) throws RemoteException {
-		// TODO Auto-generated method stub
+	public Boolean logout(User user) throws RemoteException {		
+		if(usersOnline.get(user) != null) {
+			usersOnline.remove(user);
+			return true;
+		}
+		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Boolean sendMessage(String content, Date date, User sender, List<String> logins) throws RemoteException {
+		if(usersOnline.get(sender) == null) {
+			return false;
+		}
 		
-	}	
+		Session session = HibernateUtils.getSession();
+		Transaction transaction = session.beginTransaction();
+		
+		String command = "select u from user as u where u.login in elements(:logins)";
+		Query query = session.createQuery(command).setParameter("logins", logins);
+		List<User> receivers = query.list();
+		
+		transaction.commit();
+		
+		for(User receiver : receivers) {
+			if(usersOnline.get(receiver) == null) {
+				session.close();
+				return false;
+			}
+		}
+		
+		Message message = new Message(content, date, sender, receivers);
+		
+		for(User receiver : receivers) {
+			usersOnline.get(receiver).retreiveMessage(message);
+		}
+		
+		transaction = session.beginTransaction();
+		
+		session.persist(message);
+		
+		transaction.commit();
+		session.close();
+		
+		return true;
+	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Boolean addContact(User user, String contact) throws RemoteException {
-		// TODO Auto-generated method stub
+		Session session = HibernateUtils.getSession();
+		Transaction transaction = session.beginTransaction();
+		
+		String command = "select u from user as u where u.login like :contact";
+		Query query = session.createQuery(command).setParameter("contact", contact);
+		List<User> found = query.list();
+		
+		transaction.commit();
+		
+		if(found.isEmpty()) {
+			session.close();
+			return false;
+		}
+		
+		ContactList contactList = user.getContactList();
+		List<User> userList = contactList.getUserList();
+		User contactAsUser = found.get(0);
+		
+		if(userList.contains(contactAsUser)) {
+			session.close();
+			return false;
+		}
+		
+		userList.add(contactAsUser);
+		contactList.setUserList(userList);
+		user.setContactList(contactList);
+		
+		transaction = session.beginTransaction();
+		
+		session.saveOrUpdate(user);
+		
+		transaction.commit();
+		session.close();
 		return null;
 	}
 
 	@Override
 	public Boolean deleteContact(User user, String contact) throws RemoteException {
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean addUser(User user) throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Boolean deleteUser(User user) throws RemoteException {
-		// TODO Auto-generated method stub
+		
+		/*
+		command = "select c from user as u inner join u.contactListId as cl inner join cl.contactListId as uc inner join uc.login as c where u.login like :login and c.login like :contact";
+		query = session.createQuery(command).setParameter("login", user.getLogin()).setParameter("contact", contact);
+		*/
+		
 		return null;
 	}
 
 	@Override
 	public List<User> getContacts(User user) throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Conversation getConversations(User user, List<User> contacts) throws RemoteException {
 		// TODO Auto-generated method stub
 		return null;
 	}

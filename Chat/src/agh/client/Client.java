@@ -3,6 +3,7 @@ package agh.client;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
+import agh.userandmessage.model.Message;
 import agh.server.ServerInterface;
 
 public class Client extends UnicastRemoteObject implements ClientInterface, Runnable {
@@ -20,8 +21,7 @@ public class Client extends UnicastRemoteObject implements ClientInterface, Runn
 	}
 
 	@Override
-	public void retreiveMessage(String message) throws RemoteException {
+	public void retreiveMessage(Message message) throws RemoteException {
 		// TODO Auto-generated method stub
-		// System.out.println(message);
 	}
 }

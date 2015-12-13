@@ -74,6 +74,7 @@ public class ServerGUI extends JFrame {
             clients = new ArrayList<>();
         }
 
+        //Temporary for CORE tests
         @Override
         public void registerClient(IClient client) throws RemoteException {
             this.clients.add(client);

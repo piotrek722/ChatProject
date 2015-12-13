@@ -3,8 +3,6 @@ package agh.core.client;
 import agh.core.server.IServer;
 import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.*;
 import java.rmi.RemoteException;
@@ -135,7 +133,7 @@ public class ClientGUI extends JFrame {
             server.registerClient(this);
         }
 
-        //TEMPORARY
+        //Temporary for CORE tests
         @Override
         public void retrieveMessage(String message) throws RemoteException {
             //find tab or open new tab
@@ -158,7 +156,6 @@ public class ClientGUI extends JFrame {
         public Login() {
             setContentPane(contentPane);
             setModal(true);
-            //getRootPane().setDefaultButton(buttonSignIn);
             setSize(300, 300);
             setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -169,15 +166,14 @@ public class ClientGUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             Object src = e.getSource();
-
             if (src == buttonSignIn) onSignIn();
             else if (src == buttonSignUp) onSignUp();
         }
 
+        //Temporary for CORE tests
         private void onSignIn() {
             String login = textFieldLogin.getText();
             //Password?
-
             try {
                 if(server.login(login, "PASS")){
                     client = new Client(login);
@@ -206,7 +202,6 @@ public class ClientGUI extends JFrame {
         public Register() {
             setContentPane(contentPane);
             setModal(true);
-            //getRootPane().setDefaultButton(buttonSignUp);
             setSize(400, 400);
             setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
@@ -246,15 +241,7 @@ public class ClientGUI extends JFrame {
             setModal(true);
             setSize(500, 200);
             setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-            //getRootPane().setDefaultButton(buttonOK);
         }
-
-//        public static void main(String[] args) {
-//            Search dialog = new Search();
-//            dialog.pack();
-//            dialog.setVisible(true);
-//            System.exit(0);
-//        }
     }
 
     public class ConversationTab extends JPanel implements ActionListener {

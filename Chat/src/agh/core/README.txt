@@ -1,6 +1,6 @@
 Przed uruchomieniem ClientDriver lub ServerDriver należy użyć "rmic" z argumentem kolejno:
     agh.core.server.ServerGUI.Server
-    agh.core.server.ClientGUI.Client
+    agh.core.client.ClientGUI.Client
 
 Następnie należy uruchomić "rmiregistry"
 

@@ -5,4 +5,5 @@ import java.rmi.RemoteException;
 
 public interface IClient extends Remote {
     void retrieveMessage(String message) throws RemoteException;
+    String getLogin() throws RemoteException;
 }

@@ -11,8 +11,8 @@ public class ServerGUI extends JFrame {
     private JPanel mainPanel;
     private JButton sendButton;
     private JTextField textField;
-    private JList userList;
-    private DefaultListModel<String> userOnlineList; //Later DefaultListModel<User>
+    private JList contactJList;
+    private DefaultListModel<String> contacts; //Later DefaultListModel<User>
     private JTextArea textArea;
 
     private Server server;
@@ -62,8 +62,8 @@ public class ServerGUI extends JFrame {
 
     private void createUIComponents() {
         // TODO: place custom component creation code here
-        userOnlineList = new DefaultListModel<>();
-        userList = new JList(userOnlineList);
+        contacts = new DefaultListModel<>();
+        contactJList = new JList(contacts);
     }
 
     public class Server extends UnicastRemoteObject implements IServer {
@@ -77,12 +77,13 @@ public class ServerGUI extends JFrame {
         @Override
         public void registerClient(IClient client) throws RemoteException {
             this.clients.add(client);
-            userOnlineList.addElement("Client_");
+            contacts.addElement(client.getLogin());
         }
 
         @Override
         public void unregisterClient(IClient client) throws RemoteException {
             this.clients.remove(client);
+            contacts.removeElement(client.getLogin());
         }
 
         @Override
@@ -94,7 +95,13 @@ public class ServerGUI extends JFrame {
 
         @Override
         public void retrieveMessage(String message) throws RemoteException {
-            textArea.append(message);
+            textArea.append(message + "\n");
+        }
+
+        @Override
+        public Boolean login(String name, String password) throws RemoteException {
+            //registerClient();
+            return true;
         }
     }
 }

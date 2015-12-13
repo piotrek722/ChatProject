@@ -31,7 +31,7 @@
         <properties/>
         <border type="etched" title="Users online" title-justification="2" title-position="2"/>
         <children>
-          <component id="3cf12" class="javax.swing.JList" binding="userList" custom-create="true">
+          <component id="3cf12" class="javax.swing.JList" binding="contactJList" custom-create="true">
             <constraints>
               <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="50"/>

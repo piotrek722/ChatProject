@@ -10,4 +10,5 @@ public interface IServer extends Remote {
     void unregisterClient(IClient client) throws RemoteException;
     void broadcastMessage(String message) throws RemoteException;
     void retrieveMessage(String message) throws RemoteException;
+    Boolean login(String name, String password) throws RemoteException;
 }

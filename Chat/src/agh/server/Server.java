@@ -180,24 +180,43 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		
 		transaction.commit();
 		session.close();
-		return null;
+		return true;
 	}
-
+	
 	@Override
 	public Boolean deleteContact(User user, String contact) throws RemoteException {
-		// TODO Auto-generated method stub
+		ContactList contactList = user.getContactList();
+		List<User> userList = contactList.getUserList();
+		User contactAsUser = null;
 		
-		/*
-		command = "select c from user as u inner join u.contactListId as cl inner join cl.contactListId as uc inner join uc.login as c where u.login like :login and c.login like :contact";
-		query = session.createQuery(command).setParameter("login", user.getLogin()).setParameter("contact", contact);
-		*/
+		for(User item : userList) {
+			if(item.getLogin().equals(contact)) {
+				contactAsUser = item;
+				break;
+			}
+		}
 		
-		return null;
+		if(contactAsUser == null) {
+			return false;
+		}
+		
+		userList.remove(contactAsUser);
+		contactList.setUserList(userList);
+		user.setContactList(contactList);
+		
+		Session session = HibernateUtils.getSession();
+		Transaction transaction = session.beginTransaction();
+		
+		session.saveOrUpdate(user);
+		
+		transaction.commit();
+		session.close();
+		return true;
 	}
 
 	@Override
 	public List<User> getContacts(User user) throws RemoteException {
-		// TODO Auto-generated method stub
-		return null;
+		ContactList contactList = user.getContactList();
+		return contactList.getUserList();
 	}
 }

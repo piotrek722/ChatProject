@@ -23,7 +23,7 @@ public class User implements Serializable {
     @Column(name = "password")
     private String password;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinColumn(name = "contactListId")
     private ContactList contactList;
 

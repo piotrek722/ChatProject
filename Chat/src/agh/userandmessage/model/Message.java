@@ -28,11 +28,11 @@ public class Message implements Serializable {
     @Column(name = "date")
     private Date date;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sender")
     private User sender;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinTable(name = "Receivers",
             joinColumns = @JoinColumn(name = "messageId"),
             inverseJoinColumns = @JoinColumn(name = "login"))

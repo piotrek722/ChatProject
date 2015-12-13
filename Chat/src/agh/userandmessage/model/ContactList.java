@@ -1,7 +1,5 @@
 package agh.userandmessage.model;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.IndexColumn;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -24,7 +22,7 @@ public class ContactList implements Serializable {
     @GeneratedValue
     private int contactListId;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinTable(
             name = "User_Contact",
             joinColumns = @JoinColumn(name = "contactListId"),

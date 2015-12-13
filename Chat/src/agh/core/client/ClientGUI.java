@@ -1,8 +1,10 @@
 package agh.core.client;
 
 import agh.core.server.IServer;
-
 import javax.swing.*;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
 import java.awt.*;
 import java.awt.event.*;
 import java.rmi.RemoteException;
@@ -14,27 +16,30 @@ public class ClientGUI extends JFrame {
     private JPanel mainPanel;
     private JList contactJList;
     private DefaultListModel<String> contacts;
-    private JButton sendButton;
-    private JTextField textField;
     private JTabbedPane tabbedPane;
-    private JTextArea textAreaStart;
-    private SimpleDateFormat simpleDateFormat;
 
     private IServer server;
     private Client client;
 
-    public ClientGUI(IServer server) throws RemoteException {
+    public ClientGUI(IServer server) throws RemoteException, UnsupportedLookAndFeelException {
         super("CHAT");
+        UIManager.setLookAndFeel(new NimbusLookAndFeel());
         this.server = server;
-        //this.client = new Client();
-        this.simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
 
         //MENU BAR
         JMenuBar menuBar = new JMenuBar();
 
         JMenu file = new JMenu("Menu");
-        file.add("Add contact");
-        file.add("Account Settings");
+        JMenuItem addContact = new JMenuItem("Add contact");
+        addContact.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new Search().setVisible(true);
+            }
+        });
+        file.add(addContact);
+        JMenuItem accountSettings = new JMenuItem("Account Settings");
+        file.add(accountSettings);
         file.addSeparator();
         JMenuItem exit = new JMenuItem("Exit");
         file.add(exit);
@@ -42,24 +47,10 @@ public class ClientGUI extends JFrame {
         menuBar.add(file);
 
         this.setJMenuBar(menuBar);
-
+        //MENU BAR
 
         setContentPane(mainPanel);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        sendButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sendMessage();
-            }
-        });
-
-        textField.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyTyped(KeyEvent e) {
-                if (e.getKeyChar() == '\n') sendMessage();
-            }
-        });
 
         //For tests only
         contacts.addElement("Kontakt");
@@ -67,32 +58,6 @@ public class ClientGUI extends JFrame {
         contacts.addElement("HTHTth");
         contacts.addElement("jistjoisetu8");
         contacts.addElement("jifosejfisoe");
-
-        /**
-         * Double click on contact from the JList adds ConversationTab to JTabbedPane
-         * with the contact name and set it as selected.
-         * If such tab already exists just set it as selected.
-         * DELETE
-         */
-        contactJList.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent mouseEvent) {
-                JList theList = (JList) mouseEvent.getSource();
-                if (mouseEvent.getClickCount() == 2) {
-                    int index = theList.locationToIndex(mouseEvent.getPoint());
-                    if (index >= 0) {
-                        Object o = theList.getModel().getElementAt(index);
-                        if((index = tabbedPane.indexOfTab(o.toString())) == -1) {
-                            ConversationTab conversationTab = new ConversationTab();
-                            tabbedPane.addTab(o.toString(), conversationTab);
-                            tabbedPane.setSelectedComponent(conversationTab);
-                        }
-                        else
-                            tabbedPane.setSelectedIndex(index);
-                    }
-                }
-            }
-        });
 
         contactJList.addKeyListener(new KeyAdapter() {
             @Override
@@ -116,28 +81,13 @@ public class ClientGUI extends JFrame {
             }
         }));
 
+
         new Login().setVisible(true);
 
         setSize(600, 400);
         setVisible(true);
     }
 
-
-    private void sendMessage() {
-        //Here we should create object Message instead of String
-        String msg = simpleDateFormat.format(new Date()) + " # " + textField.getText();
-        textField.setText("");
-        ConversationTab tab = (ConversationTab) tabbedPane.getSelectedComponent();
-        tab.append(msg); //append to client's conversation textarea
-
-        ArrayList<String> users = tab.getContacts(); //to Message object
-
-        try {
-            server.retrieveMessage(msg);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
 
     private void startConversationWithChosenContacts() {
         ArrayList<String> chosenContacts = new ArrayList<>();
@@ -162,7 +112,7 @@ public class ClientGUI extends JFrame {
             }
         }
 
-        //If it's not
+        //It is not opened
         if (chosenContacts.size() == 1) //If private conversation
             tabbedPane.addTab(chosenContacts.get(0), conversationTab);
         else //Conference
@@ -188,7 +138,8 @@ public class ClientGUI extends JFrame {
         //TEMPORARY
         @Override
         public void retrieveMessage(String message) throws RemoteException {
-            textAreaStart.append(message + "\n");
+            //find tab or open new tab
+            //append message
         }
 
         //TEMPORARY?
@@ -197,7 +148,7 @@ public class ClientGUI extends JFrame {
         }
     }
 
-    public class Login extends JDialog {
+    public class Login extends JDialog implements ActionListener{
         private JPanel contentPane;
         private JButton buttonSignIn;
         private JTextField textFieldLogin;
@@ -207,23 +158,20 @@ public class ClientGUI extends JFrame {
         public Login() {
             setContentPane(contentPane);
             setModal(true);
-            getRootPane().setDefaultButton(buttonSignIn);
+            //getRootPane().setDefaultButton(buttonSignIn);
             setSize(300, 300);
             setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
-            buttonSignIn.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    onSignIn();
-                }
-            });
+            buttonSignIn.addActionListener(this);
+            buttonSignUp.addActionListener(this);
+        }
 
-            buttonSignUp.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    onSignUp();
-                }
-            });
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Object src = e.getSource();
+
+            if (src == buttonSignIn) onSignIn();
+            else if (src == buttonSignUp) onSignUp();
         }
 
         private void onSignIn() {
@@ -246,7 +194,7 @@ public class ClientGUI extends JFrame {
         }
     }
 
-    public class Register extends JDialog {
+    public class Register extends JDialog implements ActionListener {
         private JPanel contentPane;
         private JButton buttonSignUp;
         private JButton buttonSignIn;
@@ -258,21 +206,19 @@ public class ClientGUI extends JFrame {
         public Register() {
             setContentPane(contentPane);
             setModal(true);
-            getRootPane().setDefaultButton(buttonSignUp);
+            //getRootPane().setDefaultButton(buttonSignUp);
             setSize(400, 400);
             setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
-            buttonSignUp.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    onSignUp();
-                }
-            });
+            buttonSignUp.addActionListener(this);
+            buttonSignIn.addActionListener(this);
+        }
 
-            buttonSignIn.addActionListener(new ActionListener() {
-                public void actionPerformed(ActionEvent e) {
-                    onSignIn();
-                }
-            });
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Object src = e.getSource();
+            if (src == buttonSignIn) onSignIn();
+            else if (src == buttonSignUp) onSignUp();
         }
 
         private void onSignUp() {
@@ -285,31 +231,80 @@ public class ClientGUI extends JFrame {
         }
     }
 
-    public class ConversationTab extends JPanel{
+    public class Search extends JDialog {
+        private JPanel contentPane;
+        private JTextField nickField;
+        private JTextField lastNameField;
+        private JTextField firstNameField;
+        private JButton searchButton;
+        private JButton addButton;
+        private JTable resultsTable;
+        private JButton buttonOK;
+
+        public Search() {
+            setContentPane(contentPane);
+            setModal(true);
+            setSize(500, 200);
+            setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            //getRootPane().setDefaultButton(buttonOK);
+        }
+
+//        public static void main(String[] args) {
+//            Search dialog = new Search();
+//            dialog.pack();
+//            dialog.setVisible(true);
+//            System.exit(0);
+//        }
+    }
+
+    public class ConversationTab extends JPanel implements ActionListener {
         private JTextArea textArea;
         private JLabel label;
         private JPanel panel;
         private JButton closeButton;
+        private JTextField messageField;
+        private JButton sendButton;
+        private ArrayList<String> contacts; //Chosen from JList
+        private SimpleDateFormat simpleDateFormat;
 
         public ConversationTab() {
             this.setLayout(new GridLayout());
             this.add(panel);
-            closeButton.addActionListener(new ActionListener() {
+            this.simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+
+            sendButton.addActionListener(this);
+            closeButton.addActionListener(this);
+
+            messageField.addKeyListener(new KeyAdapter() {
                 @Override
-                public void actionPerformed(ActionEvent e) {
-                    closeTab();
+                public void keyTyped(KeyEvent e) {
+                    if (e.getKeyChar() == '\n')
+                        sendMessage();
                 }
             });
         }
 
-        private ArrayList<String> contacts; //Chosen from JList
-
-        public void append(String message) {
-            this.textArea.append(message + "\n");
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            Object src = e.getSource();
+            if (src == sendButton) sendMessage();
+            else if (src == closeButton) closeTab();
         }
 
         private void closeTab() {
             tabbedPane.remove(this);
+        }
+
+        private void sendMessage() {
+            String msg = simpleDateFormat.format(new Date()) + " # " + messageField.getText();
+            messageField.setText("");
+            textArea.append(msg + "\n");
+
+            try {
+                server.retrieveMessage(msg);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
 
         public void setLabelText(String text) {

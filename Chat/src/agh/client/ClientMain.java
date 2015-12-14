@@ -16,7 +16,7 @@ public class ClientMain {
     public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException {
         String serverURL = "rmi://localhost/RMIServer";
 	ServerInterface server = (ServerInterface) Naming.lookup(serverURL);
-	new Thread(new Client(server)).start();
+	new Client(server);
     }
 
 }

@@ -2,6 +2,7 @@ package agh.server;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +14,7 @@ import org.hibernate.Transaction;
 
 import agh.client.ClientInterface;
 import agh.userandmessage.model.ContactList;
+import agh.userandmessage.model.Conversation;
 import agh.userandmessage.model.Message;
 import agh.userandmessage.model.User;
 import agh.persistence.HibernateUtils;
@@ -33,7 +35,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		Session session = HibernateUtils.getSession();
 		Transaction transaction = session.beginTransaction();
 		
-		String command = "select u from user as u where u.login like :login";
+		String command = "select u from User u where u.login like :login";
 		Query query = session.createQuery(command).setParameter("login", login);
 		List<User> found = query.list();
 		
@@ -55,7 +57,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		Session session = HibernateUtils.getSession();
 		Transaction transaction = session.beginTransaction();
 		
-		String command = "select u from user as u where u.login like :login";
+		String command = "select u from User u where u.login like :login";
 		Query query = session.createQuery(command).setParameter("login", user.getLogin());
 		List<User> found = query.list();
 		
@@ -76,7 +78,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		Session session = HibernateUtils.getSession();
 		Transaction transaction = session.beginTransaction();
 		
-		String command = "select u from user as u where u.login like :login and u.password like :password";
+		String command = "select u from User u where u.login like :login and u.password like :password";
 		Query query = session.createQuery(command).setParameter("login", login).setParameter("password", password);
 		List<User> found = query.list();
 		
@@ -115,7 +117,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		Session session = HibernateUtils.getSession();
 		Transaction transaction = session.beginTransaction();
 		
-		String command = "select u from user as u where u.login in elements(:logins)";
+		String command = "select u from User u where u.login in elements(:logins)";
 		Query query = session.createQuery(command).setParameter("logins", logins);
 		List<User> receivers = query.list();
 		
@@ -129,6 +131,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		}
 		
 		Message message = new Message(content, date, sender, receivers);
+		usersOnline.get(sender).retreiveMessage(message);
 		
 		for(User receiver : receivers) {
 			usersOnline.get(receiver).retreiveMessage(message);
@@ -150,7 +153,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		Session session = HibernateUtils.getSession();
 		Transaction transaction = session.beginTransaction();
 		
-		String command = "select u from user as u where u.login like :contact";
+		String command = "select u from User u where u.login like :contact";
 		Query query = session.createQuery(command).setParameter("contact", contact);
 		List<User> found = query.list();
 		
@@ -161,13 +164,13 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 			return false;
 		}
 		
-		ContactList contactList = user.getContactList();
+		ContactList contactList = this.getContacts(user);
 		List<User> userList = contactList.getUserList();
 		User contactAsUser = found.get(0);
 		
 		if(userList.contains(contactAsUser)) {
 			session.close();
-			return false;
+			return true;
 		}
 		
 		userList.add(contactAsUser);
@@ -185,7 +188,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 	
 	@Override
 	public Boolean deleteContact(User user, String contact) throws RemoteException {
-		ContactList contactList = user.getContactList();
+		ContactList contactList = this.getContacts(user);
 		List<User> userList = contactList.getUserList();
 		User contactAsUser = null;
 		
@@ -197,7 +200,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		}
 		
 		if(contactAsUser == null) {
-			return false;
+			return true;
 		}
 		
 		userList.remove(contactAsUser);
@@ -214,9 +217,54 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public List<User> getContacts(User user) throws RemoteException {
-		ContactList contactList = user.getContactList();
-		return contactList.getUserList();
+	public ContactList getContacts(User user) throws RemoteException {
+		Session session = HibernateUtils.getSession();
+		Transaction transaction = session.beginTransaction();
+		
+		String command = "select c from User u inner join u.contactListId cl inner join cl.contactListId uc inner join uc.login c where u.login like :login";
+		Query query = session.createQuery(command).setParameter("login", user.getLogin());
+		List<User> userList = query.list();
+		
+		transaction.commit();
+		session.close();
+		
+		ContactList contactList = new ContactList();
+		contactList.setUserList(userList);
+		return contactList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public Conversation getMessages(User user, List<String> selectedContacts) throws RemoteException {
+		Session session = HibernateUtils.getSession();
+		Transaction transaction = session.beginTransaction();
+		
+		String command = "select u from User u where u.login in elements(:contacts)";
+		Query query = session.createQuery(command).setParameter("contacts", selectedContacts);
+		List<User> selectedUsers = query.list();
+		
+		transaction.commit();
+		
+		List<User> participants = new ArrayList<User>(selectedUsers);
+		participants.add(user);
+		
+		transaction = session.beginTransaction();
+		
+		command = "select m from Message m inner join m.messageId r "
+				+ "where m.sender in elements(:participants) and r = ( "
+				+ "select u from User u where u in elements(:participants) and u != m.sender "
+				+ ") and count(r) = (:size)-1 "
+				+ "group by m.date order by m.date";
+		query = session.createQuery(command).setParameter("participants", participants).setParameter("size", participants.size());
+		List<Message> messages = query.list();
+		
+		transaction.commit();
+		session.close();
+		
+		Conversation conversation = new Conversation();
+		conversation.setMessages(messages);
+		return conversation;
 	}
 }

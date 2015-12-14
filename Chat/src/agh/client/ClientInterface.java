@@ -6,5 +6,5 @@ import java.rmi.RemoteException;
 import agh.userandmessage.model.Message;
 
 public interface ClientInterface extends Remote {
-    void retreiveMessage(Message message) throws RemoteException;
+    Message retreiveMessage(Message message) throws RemoteException;
 }

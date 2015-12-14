@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 
 import agh.client.ClientInterface;
+import agh.userandmessage.model.ContactList;
+import agh.userandmessage.model.Conversation;
 import agh.userandmessage.model.User;
 
 public interface ServerInterface extends Remote {
@@ -16,5 +18,6 @@ public interface ServerInterface extends Remote {
 	Boolean sendMessage(String content, Date date, User sender, List<String> logins) throws RemoteException;
 	Boolean addContact(User user, String contact) throws RemoteException;
 	Boolean deleteContact(User user, String contact) throws RemoteException;
-	List<User> getContacts(User user) throws RemoteException;
+	ContactList getContacts(User user) throws RemoteException;
+	Conversation getMessages(User user, List<String> selectedContacts) throws RemoteException;
 }

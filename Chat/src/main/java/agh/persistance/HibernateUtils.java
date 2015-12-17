@@ -5,6 +5,7 @@ import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
+
 import java.io.File;
 
 /**
@@ -17,7 +18,7 @@ public class HibernateUtils {
 
     static{
         Configuration configuration = new Configuration();
-        configuration.configure(new File("Chat/hibernate.cfg.xml"));
+        configuration.configure(new File("Chat/src/main/resources/hibernate.cfg.xml"));
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(
                 configuration.getProperties()).build();
         sessionFactory = configuration.buildSessionFactory(serviceRegistry);

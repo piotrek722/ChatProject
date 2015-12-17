@@ -1,14 +1,14 @@
 package agh.server;
 
-import java.rmi.Remote;
-import java.rmi.RemoteException;
-import java.util.Date;
-import java.util.List;
-
 import agh.client.ClientInterface;
 import agh.userandmessage.model.ContactList;
 import agh.userandmessage.model.Conversation;
 import agh.userandmessage.model.User;
+
+import java.rmi.Remote;
+import java.rmi.RemoteException;
+import java.util.Date;
+import java.util.List;
 
 public interface ServerInterface extends Remote {
 	Boolean registerClient(String login, String password, String name, String lastName) throws RemoteException;

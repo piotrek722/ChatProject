@@ -1,23 +1,18 @@
 package agh.server;
 
-import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
-
 import agh.client.ClientInterface;
+import agh.persistance.HibernateUtils;
 import agh.userandmessage.model.ContactList;
 import agh.userandmessage.model.Conversation;
 import agh.userandmessage.model.Message;
 import agh.userandmessage.model.User;
-import agh.persistence.HibernateUtils;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+import java.util.*;
 
 public class Server extends UnicastRemoteObject implements ServerInterface {
 	
@@ -25,10 +20,9 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 	private Map<User, ClientInterface> usersOnline;
 
 	protected Server() throws RemoteException {
-		usersOnline = new HashMap<User, ClientInterface>();
+		usersOnline = new HashMap<>();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Boolean registerClient(String login, String password, String name, String lastName) throws RemoteException {
 		Boolean isSuccessful = false;
@@ -50,7 +44,6 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		return isSuccessful;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Boolean unregisterClient(User user) throws RemoteException {
 		Boolean isSuccessful = false;
@@ -71,8 +64,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		
 		return isSuccessful;
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	@Override
 	public User login(ClientInterface client, String login, String password) throws RemoteException {
 		Session session = HibernateUtils.getSession();
@@ -106,8 +98,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		}
 		return false;
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	@Override
 	public Boolean sendMessage(String content, Date date, User sender, List<String> logins) throws RemoteException {
 		if(usersOnline.get(sender) == null) {
@@ -147,7 +138,6 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Boolean addContact(User user, String contact) throws RemoteException {
 		Session session = HibernateUtils.getSession();
@@ -217,7 +207,6 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		return true;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public ContactList getContacts(User user) throws RemoteException {
 		Session session = HibernateUtils.getSession();
@@ -234,8 +223,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		contactList.setUserList(userList);
 		return contactList;
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	@Override
 	public Conversation getMessages(User user, List<String> selectedContacts) throws RemoteException {
 		Session session = HibernateUtils.getSession();
@@ -247,7 +235,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		
 		transaction.commit();
 		
-		List<User> participants = new ArrayList<User>(selectedUsers);
+		List<User> participants = new ArrayList<>(selectedUsers);
 		participants.add(user);
 		
 		transaction = session.beginTransaction();

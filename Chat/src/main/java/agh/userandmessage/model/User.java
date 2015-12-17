@@ -1,8 +1,6 @@
 package agh.userandmessage.model;
 
 
-import org.hibernate.annotations.Cascade;
-
 import javax.persistence.*;
 import java.io.Serializable;
 
@@ -10,6 +8,7 @@ import java.io.Serializable;
  * Created by Peter on 2015-11-20.
  * Project name : ChatProject
  */
+
 @Entity
 @Table(name="User")
 public class User implements Serializable {

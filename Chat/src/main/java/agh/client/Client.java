@@ -1,10 +1,10 @@
 package agh.client;
 
+import agh.server.ServerInterface;
+import agh.userandmessage.model.Message;
+
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-
-import agh.userandmessage.model.Message;
-import agh.server.ServerInterface;
 
 public class Client extends UnicastRemoteObject implements ClientInterface {
 
@@ -12,7 +12,7 @@ public class Client extends UnicastRemoteObject implements ClientInterface {
 	private ServerInterface server;
 
 	protected Client(ServerInterface server) throws RemoteException {
-		this.setServer(server);
+		this.server = server;
 	}
 
 	@Override
@@ -27,4 +27,5 @@ public class Client extends UnicastRemoteObject implements ClientInterface {
 	public void setServer(ServerInterface server) {
 		this.server = server;
 	}
+
 }

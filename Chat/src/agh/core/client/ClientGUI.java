@@ -9,43 +9,31 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ClientGUI extends JFrame {
     private JPanel mainPanel;
     private JList contactJList;
     private DefaultListModel<String> contacts;
     private JTabbedPane tabbedPane;
+    private JPopupMenu popupMenu;
 
     private IServer server;
     private Client client;
+
+    private static final Logger LOGGER = Logger.getLogger("Logger");
+    private static final int CLIENT_WIDTH = 600;
+    private static final int CLIENT_HEIGHT = 400;
 
     public ClientGUI(IServer server) throws RemoteException, UnsupportedLookAndFeelException {
         super("CHAT");
         UIManager.setLookAndFeel(new NimbusLookAndFeel());
         this.server = server;
 
-        //MENU BAR
-        JMenuBar menuBar = new JMenuBar();
-
-        JMenu file = new JMenu("Menu");
-        JMenuItem addContact = new JMenuItem("Add contact");
-        addContact.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new Search().setVisible(true);
-            }
-        });
-        file.add(addContact);
-        JMenuItem accountSettings = new JMenuItem("Account Settings");
-        file.add(accountSettings);
-        file.addSeparator();
-        JMenuItem exit = new JMenuItem("Exit");
-        file.add(exit);
-
-        menuBar.add(file);
-
-        this.setJMenuBar(menuBar);
-        //MENU BAR
+        createMenuBar();
+        createPopupMenu();
 
         setContentPane(mainPanel);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -70,25 +58,80 @@ public class ClientGUI extends JFrame {
          * On close send to server that client is offline
          */
         Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+            @Override
             public void run() {
                 try {
                     server.unregisterClient(client);
                 } catch (RemoteException e) {
-                    e.printStackTrace();
+                    LOGGER.log(Level.SEVERE, e.getMessage());
                 }
             }
         }));
 
-
         new Login().setVisible(true);
 
-        setSize(600, 400);
+        setSize(CLIENT_WIDTH, CLIENT_HEIGHT);
         setVisible(true);
     }
 
+    private void createMenuBar(){
+        JMenuBar menuBar = new JMenuBar();
+
+        JMenu file = new JMenu("Menu");
+
+        JMenuItem searchContact = new JMenuItem("Search contact");
+        searchContact.addActionListener(e ->  new Search().setVisible(true));
+        file.add(searchContact);
+
+        JMenuItem accountSettings = new JMenuItem("Account Settings");
+        file.add(accountSettings);
+        file.addSeparator();
+        JMenuItem logout = new JMenuItem("Log out");
+        file.add(logout);
+        JMenuItem exit = new JMenuItem("Exit");
+        file.add(exit);
+
+        menuBar.add(file);
+
+        this.setJMenuBar(menuBar);
+    }
+
+    private void createPopupMenu(){
+        this.popupMenu = new JPopupMenu();
+
+        JMenuItem startConversation = new JMenuItem("Start conversation");
+        startConversation.addActionListener(e -> startConversationWithChosenContacts());
+        popupMenu.add(startConversation);
+
+        JMenuItem delete = new JMenuItem("Delete");
+        delete.addActionListener(e -> {
+            List<Object> values = contactJList.getSelectedValuesList();
+            for (Object elem : values) {
+                contacts.removeElement(elem);
+            }
+        });
+        popupMenu.add(delete);
+        contactJList.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    int index = contactJList.locationToIndex(new Point(e.getX(), e.getY()));
+                    if (!contactJList.isSelectedIndex(index)) {
+                        contactJList.setSelectedIndex(index);
+                    }
+                    popupMenu.show(contactJList, e.getX(), e.getY());
+                }
+            }
+        });
+    }
+
+    private void createUIComponents() {
+        contacts = new DefaultListModel<>();
+        contactJList = new JList(contacts);
+    }
 
     private void startConversationWithChosenContacts() {
-        ArrayList<String> chosenContacts = new ArrayList<>();
+        List<String> chosenContacts = new ArrayList<>();
         String text = "";
 
         for (int index : contactJList.getSelectedIndices()) {
@@ -102,7 +145,7 @@ public class ClientGUI extends JFrame {
 
         //Check if the conversationTab is already opened
         for (int i = 0; i < tabbedPane.getTabCount(); i++) {
-            ArrayList<String> conversationContactsList;
+            List<String> conversationContactsList;
             conversationContactsList = ((ConversationTab)tabbedPane.getComponentAt(i)).getContacts();
             if (Arrays.equals(chosenContacts.toArray(), conversationContactsList.toArray())) {
                 tabbedPane.setSelectedIndex(i);
@@ -111,17 +154,13 @@ public class ClientGUI extends JFrame {
         }
 
         //It is not opened
-        if (chosenContacts.size() == 1) //If private conversation
+        if (chosenContacts.size() == 1) {//If private conversation
             tabbedPane.addTab(chosenContacts.get(0), conversationTab);
-        else //Conference
+        } else {//Conference
             tabbedPane.addTab("Conference", conversationTab);
+        }
 
         tabbedPane.setSelectedComponent(conversationTab);
-    }
-
-    private void createUIComponents() {
-        contacts = new DefaultListModel<>();
-        contactJList = new JList(contacts);
     }
 
     public class Client extends UnicastRemoteObject implements IClient {
@@ -153,10 +192,13 @@ public class ClientGUI extends JFrame {
         private JPasswordField passwordField;
         private JButton buttonSignUp;
 
+        private static final int LOGIN_WIDTH = 300;
+        private static final int LOGIN_HEIGHT = 300;
+
         public Login() {
             setContentPane(contentPane);
             setModal(true);
-            setSize(300, 300);
+            setSize(LOGIN_WIDTH, LOGIN_HEIGHT);
             setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
             buttonSignIn.addActionListener(this);
@@ -166,8 +208,11 @@ public class ClientGUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             Object src = e.getSource();
-            if (src == buttonSignIn) onSignIn();
-            else if (src == buttonSignUp) onSignUp();
+            if (src == buttonSignIn) {
+                onSignIn();
+            } else if (src == buttonSignUp) {
+                onSignUp();
+            }
         }
 
         //Temporary for CORE tests
@@ -179,7 +224,7 @@ public class ClientGUI extends JFrame {
                     client = new Client(login);
                 }
             } catch (RemoteException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage());
             }
             dispose();
         }
@@ -199,10 +244,13 @@ public class ClientGUI extends JFrame {
         private JTextField textFieldFirstName;
         private JTextField textFieldLastName;
 
+        private static final int REGISTER_WIDTH = 400;
+        private static final int REGISTER_HEIGHT = 400;
+
         public Register() {
             setContentPane(contentPane);
             setModal(true);
-            setSize(400, 400);
+            setSize(REGISTER_WIDTH, REGISTER_HEIGHT);
             setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
 
             buttonSignUp.addActionListener(this);
@@ -212,8 +260,11 @@ public class ClientGUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             Object src = e.getSource();
-            if (src == buttonSignIn) onSignIn();
-            else if (src == buttonSignUp) onSignUp();
+            if (src == buttonSignIn) {
+                onSignIn();
+            } else if (src == buttonSignUp) {
+                onSignUp();
+            }
         }
 
         private void onSignUp() {
@@ -236,10 +287,13 @@ public class ClientGUI extends JFrame {
         private JTable resultsTable;
         private JButton buttonOK;
 
+        private static final int SEARCH_WIDTH = 500;
+        private static final int SEARCH_HEIGHT = 200;
+
         public Search() {
             setContentPane(contentPane);
             setModal(true);
-            setSize(500, 200);
+            setSize(SEARCH_WIDTH, SEARCH_HEIGHT);
             setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         }
     }
@@ -251,7 +305,7 @@ public class ClientGUI extends JFrame {
         private JButton closeButton;
         private JTextField messageField;
         private JButton sendButton;
-        private ArrayList<String> contacts; //Chosen from JList
+        private List<String> contacts; //Chosen from JList
         private SimpleDateFormat simpleDateFormat;
 
         public ConversationTab() {
@@ -274,8 +328,11 @@ public class ClientGUI extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             Object src = e.getSource();
-            if (src == sendButton) sendMessage();
-            else if (src == closeButton) closeTab();
+            if (src == sendButton) {
+                sendMessage();
+            } else if (src == closeButton) {
+                closeTab();
+            }
         }
 
         private void closeTab() {
@@ -290,7 +347,7 @@ public class ClientGUI extends JFrame {
             try {
                 server.retrieveMessage(msg);
             } catch (RemoteException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.SEVERE, e.getMessage());
             }
         }
 
@@ -298,11 +355,11 @@ public class ClientGUI extends JFrame {
             this.label.setText(text);
         }
 
-        public ArrayList<String> getContacts() {
+        public List<String> getContacts() {
             return contacts;
         }
 
-        public void setContacts(ArrayList<String> contacts) {
+        public void setContacts(List<String> contacts) {
             this.contacts = contacts;
         }
     }

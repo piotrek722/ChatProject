@@ -9,7 +9,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 public class ClientDriver {
-    public static void main(String args[]) throws RemoteException, NotBoundException, MalformedURLException, UnsupportedLookAndFeelException {
+    public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException, UnsupportedLookAndFeelException {
         String serverUrl = "//localhost/RMIChatServer";
         IServer server = (IServer) Naming.lookup(serverUrl);
         new ClientGUI(server);

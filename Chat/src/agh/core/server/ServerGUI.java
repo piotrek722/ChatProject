@@ -6,16 +6,22 @@ import java.awt.event.*;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.*;
 
 public class ServerGUI extends JFrame {
     private JPanel mainPanel;
     private JButton sendButton;
     private JTextField textField;
     private JList contactJList;
-    private DefaultListModel<String> contacts; //Later DefaultListModel<User>
+    private DefaultListModel<String> contacts;
     private JTextArea textArea;
 
     private Server server;
+
+    private static final Logger LOGGER = Logger.getLogger("Logger");
+    private static final int SERVER_WIDTH = 600;
+    private static final int SERVER_HEIGHT = 400;
 
     public ServerGUI() throws RemoteException {
         super("CHAT SERVER");
@@ -30,18 +36,16 @@ public class ServerGUI extends JFrame {
             }
         });
 
-        textField.addKeyListener(new KeyListener() {
+        textField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
-                if (e.getKeyChar() == '\n') onSend();
+                if (e.getKeyChar() == '\n') {
+                    onSend();
+                }
             }
-            @Override
-            public void keyPressed(KeyEvent e) {}
-            @Override
-            public void keyReleased(KeyEvent e) {}
         });
 
-        setSize(600, 400);
+        setSize(SERVER_WIDTH, SERVER_HEIGHT);
         setVisible(true);
     }
 
@@ -52,7 +56,7 @@ public class ServerGUI extends JFrame {
         try {
             server.broadcastMessage(servermsg);
         } catch (RemoteException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage());
         }
     }
 
@@ -61,14 +65,13 @@ public class ServerGUI extends JFrame {
     }
 
     private void createUIComponents() {
-        // TODO: place custom component creation code here
         contacts = new DefaultListModel<>();
         contactJList = new JList(contacts);
     }
 
     public class Server extends UnicastRemoteObject implements IServer {
         private static final long serialVersionUID = 1L;
-        ArrayList<IClient> clients;
+        List<IClient> clients;
 
         public Server() throws RemoteException {
             clients = new ArrayList<>();
@@ -101,7 +104,6 @@ public class ServerGUI extends JFrame {
 
         @Override
         public Boolean login(String name, String password) throws RemoteException {
-            //registerClient();
             return true;
         }
     }

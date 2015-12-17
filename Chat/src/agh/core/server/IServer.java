@@ -2,10 +2,11 @@ package agh.core.server;
 
 import agh.core.client.IClient;
 
+import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-public interface IServer extends Remote {
+public interface IServer extends Remote, Serializable {
     //Temporary for CORE tests
     void registerClient(IClient client) throws RemoteException;
     void unregisterClient(IClient client) throws RemoteException;

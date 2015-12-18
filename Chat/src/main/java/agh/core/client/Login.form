@@ -16,7 +16,7 @@
         <properties/>
         <border type="etched" title="Sign In" title-justification="2"/>
         <children>
-          <component id="65922" class="javax.swing.JTextField" binding="textFieldLogin">
+          <component id="65922" class="javax.swing.JTextField" binding="loginTextField">
             <constraints>
               <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -27,7 +27,7 @@
               <toolTipText value=""/>
             </properties>
           </component>
-          <component id="f0094" class="javax.swing.JPasswordField" binding="passwordField">
+          <component id="f0094" class="javax.swing.JPasswordField" binding="passwordTextField">
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                 <preferred-size width="150" height="-1"/>
@@ -53,7 +53,7 @@
               <text value="Password"/>
             </properties>
           </component>
-          <component id="e7465" class="javax.swing.JButton" binding="buttonSignIn">
+          <component id="e7465" class="javax.swing.JButton" binding="signInButton">
             <constraints>
               <grid row="2" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>
@@ -79,7 +79,7 @@
               <text value="Don't have an account?"/>
             </properties>
           </component>
-          <component id="edee9" class="javax.swing.JButton" binding="buttonSignUp">
+          <component id="edee9" class="javax.swing.JButton" binding="signUpButton">
             <constraints>
               <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="0" indent="0" use-parent-layout="false"/>
             </constraints>

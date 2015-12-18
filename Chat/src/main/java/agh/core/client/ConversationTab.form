@@ -13,11 +13,10 @@
           <grid row="0" column="1" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
         </constraints>
         <properties>
-          <icon value="agh/core/close-icon.png"/>
-          <text value=""/>
+          <text value="X"/>
         </properties>
       </component>
-      <component id="51a2c" class="javax.swing.JLabel" binding="label">
+      <component id="51a2c" class="javax.swing.JLabel" binding="usersLabel">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false">
             <preferred-size width="340" height="16"/>
@@ -28,7 +27,7 @@
           <text value="Label"/>
         </properties>
       </component>
-      <component id="dcd3e" class="javax.swing.JTextArea" binding="textArea">
+      <component id="dcd3e" class="javax.swing.JTextArea" binding="conversationTextArea">
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="2" vsize-policy="6" hsize-policy="6" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="50"/>
@@ -38,7 +37,7 @@
           <editable value="false"/>
         </properties>
       </component>
-      <component id="8252c" class="javax.swing.JTextField" binding="messageField">
+      <component id="8252c" class="javax.swing.JTextField" binding="messageTextField">
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
             <preferred-size width="150" height="-1"/>

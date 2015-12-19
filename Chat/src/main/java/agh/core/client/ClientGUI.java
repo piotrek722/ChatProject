@@ -158,13 +158,13 @@ public class ClientGUI extends JFrame {
             tabbedPane.addTab("Conference", conversationTab);
             tabbedPane.setSelectedComponent(conversationTab);
         }
-
     }
 
     public class Client extends UnicastRemoteObject implements IClient {
         private static final long serialVersionUID = 1L;
 
         protected Client() throws RemoteException {
+            super();
             //Login field assignment?
             //Register Client
         }
@@ -316,13 +316,10 @@ public class ClientGUI extends JFrame {
             String nick = nickTextField.getText();
             String firstName = firstNameTextField.getText();
             String lastName = lastNameTextField.getText();
-            System.out.println("S");
             //User&Messages
         }
 
         private void onAdd() {
-            System.out.println("A");
-
             //User&Messages
             //Add
         }

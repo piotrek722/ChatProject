@@ -74,6 +74,7 @@ public class ServerGUI extends JFrame {
         List<IClient> clients;
 
         public Server() throws RemoteException {
+            super();
             clients = new ArrayList<>();
         }
 

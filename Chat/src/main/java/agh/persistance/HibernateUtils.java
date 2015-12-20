@@ -16,6 +16,8 @@ public class HibernateUtils {
 
     private static SessionFactory sessionFactory;
 
+    private HibernateUtils() {}
+
     static{
         Configuration configuration = new Configuration();
         configuration.configure(new File("Chat/src/main/resources/hibernate.cfg.xml"));

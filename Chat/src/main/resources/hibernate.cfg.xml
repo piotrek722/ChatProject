@@ -13,8 +13,9 @@
     <property name="show_sql">false</property>
 
     <!-- Drop and re-create the database schema at startup
-    <property name="hbm2ddl.auto">createupdate</property> -->
-    <property name="hbm2ddl.auto">update</property>
+    <property name="hbm2ddl.auto">update</property> -->
+    <property name="hbm2ddl.auto">create</property>
+
 
     <mapping class="agh.userandmessage.model.User"/>
     <mapping class="agh.userandmessage.model.ContactList"/>

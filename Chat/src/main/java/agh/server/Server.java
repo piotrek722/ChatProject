@@ -17,7 +17,7 @@ import java.util.*;
 public class Server extends UnicastRemoteObject implements ServerInterface {
 	
 	private static final long serialVersionUID = 1L;
-	private Map<User, ClientInterface> usersOnline;
+	private Map<String, ClientInterface> usersOnline;
 
 	protected Server() throws RemoteException {
 		usersOnline = new HashMap<>();
@@ -53,14 +53,14 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		String command = "select u from User u where u.login like :login";
 		Query query = session.createQuery(command).setParameter("login", user.getLogin());
 		List<User> found = query.list();
-		
-		transaction.commit();
-		session.close();
-		
+
 		if(found.size() == 1) {
 			session.delete(found.get(0));
 			isSuccessful = true;
 		}
+        transaction.commit();
+
+		session.close();
 		
 		return isSuccessful;
 	}
@@ -84,7 +84,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		User user = found.get(0);
 		
 		if(user != null) {
-			usersOnline.put(user, client);
+			usersOnline.put(user.getLogin(), client);
 		}
 		
 		return user;
@@ -92,8 +92,8 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 	
 	@Override
 	public Boolean logout(User user) throws RemoteException {		
-		if(usersOnline.get(user) != null) {
-			usersOnline.remove(user);
+		if(usersOnline.get(user.getLogin()) != null) {
+			usersOnline.remove(user.getLogin());
 			return true;
 		}
 		return false;
@@ -101,31 +101,31 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 
 	@Override
 	public Boolean sendMessage(String content, Date date, User sender, List<String> logins) throws RemoteException {
-		if(usersOnline.get(sender) == null) {
+		if(usersOnline.get(sender.getLogin()) == null) {
 			return false;
 		}
 		
 		Session session = HibernateUtils.getSession();
 		Transaction transaction = session.beginTransaction();
 		
-		String command = "select u from User u where u.login in elements(:logins)";
-		Query query = session.createQuery(command).setParameter("logins", logins);
+		String command = "select u from User u where u.login in (:logins)";
+		Query query = session.createQuery(command).setParameterList("logins", logins);
 		List<User> receivers = query.list();
 		
 		transaction.commit();
 		
 		for(User receiver : receivers) {
-			if(usersOnline.get(receiver) == null) {
+			if(usersOnline.get(receiver.getLogin()) == null) {
 				session.close();
 				return false;
 			}
 		}
 		
 		Message message = new Message(content, date, sender, receivers);
-		usersOnline.get(sender).retreiveMessage(message);
+		usersOnline.get(sender.getLogin()).retreiveMessage(message);
 		
 		for(User receiver : receivers) {
-			usersOnline.get(receiver).retreiveMessage(message);
+			usersOnline.get(receiver.getLogin()).retreiveMessage(message);
 		}
 		
 		transaction = session.beginTransaction();
@@ -141,35 +141,32 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 	@Override
 	public Boolean addContact(User user, String contact) throws RemoteException {
 		Session session = HibernateUtils.getSession();
-		Transaction transaction = session.beginTransaction();
-		
+        Transaction transaction = session.beginTransaction();
+
+		User contactToAdd = null;
 		String command = "select u from User u where u.login like :contact";
 		Query query = session.createQuery(command).setParameter("contact", contact);
-		List<User> found = query.list();
-		
-		transaction.commit();
-		
-		if(found.isEmpty()) {
+		if(!query.list().isEmpty()) {
+			contactToAdd = (User) query.list().get(0);
+		}
+
+		if(contactToAdd == null) {
 			session.close();
 			return false;
 		}
-		
-		ContactList contactList = this.getContacts(user);
-		List<User> userList = contactList.getUserList();
-		User contactAsUser = found.get(0);
-		
-		if(userList.contains(contactAsUser)) {
-			session.close();
-			return true;
+
+		user.getContactList().setContactListId(this.getContacts(user).getContactListId());
+
+		for(User u: this.getContacts(user).getUserList()){
+			if(u.getLogin().equals(contactToAdd.getLogin())){
+				session.close();
+				return true;
+			}
 		}
-		
-		userList.add(contactAsUser);
-		contactList.setUserList(userList);
-		user.setContactList(contactList);
-		
-		transaction = session.beginTransaction();
-		
-		session.saveOrUpdate(user);
+
+        user.getContactList().addContact(contactToAdd);
+
+        session.merge(user);
 		
 		transaction.commit();
 		session.close();
@@ -196,7 +193,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		userList.remove(contactAsUser);
 		contactList.setUserList(userList);
 		user.setContactList(contactList);
-		
+
 		Session session = HibernateUtils.getSession();
 		Transaction transaction = session.beginTransaction();
 		
@@ -211,16 +208,17 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 	public ContactList getContacts(User user) throws RemoteException {
 		Session session = HibernateUtils.getSession();
 		Transaction transaction = session.beginTransaction();
-		
-		String command = "select c from User u inner join u.contactListId cl inner join cl.contactListId uc inner join uc.login c where u.login like :login";
+
+		ContactList contactList = null;
+
+		String command = "select cl from User u inner join u.contactList cl where u.login like :login";
 		Query query = session.createQuery(command).setParameter("login", user.getLogin());
-		List<User> userList = query.list();
-		
+		if(!query.list().isEmpty()) {
+			contactList = (ContactList) query.list().get(0);
+		}
+
 		transaction.commit();
 		session.close();
-		
-		ContactList contactList = new ContactList();
-		contactList.setUserList(userList);
 		return contactList;
 	}
 
@@ -229,23 +227,17 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		Session session = HibernateUtils.getSession();
 		Transaction transaction = session.beginTransaction();
 		
-		String command = "select u from User u where u.login in elements(:contacts)";
-		Query query = session.createQuery(command).setParameter("contacts", selectedContacts);
+		String command = "select u from User u where u.login in (:contacts)";
+		Query query = session.createQuery(command).setParameterList("contacts", selectedContacts);
 		List<User> selectedUsers = query.list();
-		
-		transaction.commit();
-		
-		List<User> participants = new ArrayList<>(selectedUsers);
-		participants.add(user);
-		
-		transaction = session.beginTransaction();
-		
-		command = "select m from Message m inner join m.messageId r "
-				+ "where m.sender in elements(:participants) and r = ( "
-				+ "select u from User u where u in elements(:participants) and u != m.sender "
-				+ ") and count(r) = (:size)-1 "
-				+ "group by m.date order by m.date";
-		query = session.createQuery(command).setParameter("participants", participants).setParameter("size", participants.size());
+
+		command = "select m from Message m inner join m.receivers where" +
+				" m.sender.id like :sender and size(m.receivers) <> (:size)" +
+				"and exists (select u from User u where u in (:participants))" +
+				"group by m order by m.date ";
+
+		query = session.createQuery(command).setParameterList("participants", selectedUsers).setParameter("size", selectedUsers.size()-1)
+		.setParameter("sender", user.getLogin());
 		List<Message> messages = query.list();
 		
 		transaction.commit();

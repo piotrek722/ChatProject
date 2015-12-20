@@ -4,6 +4,7 @@ import agh.persistance.HibernateUtils;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
 /**
@@ -13,6 +14,7 @@ import java.rmi.RemoteException;
 public class ServerMain {
 
     public static void main(String[] args) throws RemoteException, MalformedURLException {
+        HibernateUtils.getSession().close();
         Naming.rebind("RMIServer", new Server());
         System.out.println("Server started...");
     }

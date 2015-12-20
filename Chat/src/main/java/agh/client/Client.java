@@ -1,10 +1,15 @@
 package agh.client;
 
 import agh.server.ServerInterface;
+import agh.userandmessage.model.Conversation;
 import agh.userandmessage.model.Message;
+import agh.userandmessage.model.User;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class Client extends UnicastRemoteObject implements ClientInterface {
 

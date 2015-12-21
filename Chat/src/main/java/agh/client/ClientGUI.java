@@ -361,8 +361,9 @@ public class ClientGUI extends JFrame {
             String lastName = lastNameTextField.getText();
             //User&Messages
 
+            List<String> list = new ArrayList<>();
             try {
-                server.getOnlineUsers();        //showing all users online
+                list = server.getOnlineUsers();        //showing all users online but where?
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

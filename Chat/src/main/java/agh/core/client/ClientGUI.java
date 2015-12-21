@@ -37,11 +37,20 @@ public class ClientGUI extends JFrame {
         createMenuBar();
         createPopupMenu();
 
+        contacts.addElement("Adrian Puchacki");
+        contacts.addElement("Jan Paweł");
+        contacts.addElement("Jan Paweł 2");
+        contacts.addElement("Kuba Nowicki");
+        contacts.addElement("Waldemar Walasik");
+        contacts.addElement("Wojciech Puczyk");
+
         contactJList.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
-                if (e.getKeyChar() == '\n') {
+                if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                     startConversationWithChosenContacts();
+                } else if (e.getKeyChar() == KeyEvent.VK_DELETE) {
+                    onDeleteContact();
                 }
             }
         });
@@ -61,20 +70,24 @@ public class ClientGUI extends JFrame {
 
         JMenuItem searchContact = new JMenuItem("Search contact");
         searchContact.addActionListener(e ->  new Search().setVisible(true));
+        searchContact.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK));
         file.add(searchContact);
 
         JMenuItem accountSettings = new JMenuItem("Account Settings");
         //ACTIONLISTENER
+        accountSettings.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
         file.add(accountSettings);
 
         file.addSeparator();
 
         JMenuItem logout = new JMenuItem("Log out");
         logout.addActionListener(e -> onLogOut());
+        logout.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F3, 0));
         file.add(logout);
 
         JMenuItem exit = new JMenuItem("Exit");
         exit.addActionListener(e -> onExit());
+        exit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F4, 0));
         file.add(exit);
 
         menuBar.add(file);
@@ -194,7 +207,7 @@ public class ClientGUI extends JFrame {
             KeyAdapter keyadapter = new KeyAdapter() {
                 @Override
                 public void keyTyped(KeyEvent e) {
-                    if (e.getKeyChar() == '\n') {
+                    if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                         onSignIn();
                     }
                 }
@@ -240,7 +253,7 @@ public class ClientGUI extends JFrame {
             KeyAdapter keyadapter = new KeyAdapter() {
                 @Override
                 public void keyTyped(KeyEvent e) {
-                    if (e.getKeyChar() == '\n') {
+                    if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                         onSignIn();
                     }
                 }
@@ -292,7 +305,7 @@ public class ClientGUI extends JFrame {
             KeyAdapter keyadapter = new KeyAdapter() {
                 @Override
                 public void keyTyped(KeyEvent e) {
-                    if (e.getKeyChar() == '\n') {
+                    if (e.getKeyChar() == KeyEvent.VK_ENTER) {
                         Object source = e.getSource();
                         if (source == nickTextField || source == firstNameTextField || source == lastNameTextField) {
                             onSearch();
@@ -346,7 +359,7 @@ public class ClientGUI extends JFrame {
             messageTextField.addKeyListener(new KeyAdapter() {
                 @Override
                 public void keyTyped(KeyEvent e) {
-                    if (e.getKeyChar() == '\n')
+                    if (e.getKeyChar() == KeyEvent.VK_ENTER)
                         sendMessage();
                 }
             });

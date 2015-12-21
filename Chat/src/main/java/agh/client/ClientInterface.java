@@ -1,6 +1,6 @@
 package agh.client;
 
-import agh.userandmessage.model.Message;
+import agh.model.Message;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

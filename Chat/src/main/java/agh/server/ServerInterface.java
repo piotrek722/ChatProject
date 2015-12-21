@@ -1,9 +1,9 @@
 package agh.server;
 
 import agh.client.ClientInterface;
-import agh.userandmessage.model.ContactList;
-import agh.userandmessage.model.Conversation;
-import agh.userandmessage.model.User;
+import agh.model.ContactList;
+import agh.model.Conversation;
+import agh.model.User;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;

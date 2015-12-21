@@ -8,9 +8,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 
 public class ServerDriver {
-    //private static final int PORT = 1099;
+    private static final int PORT = 1099;
     public static void main(String[] args) throws RemoteException, MalformedURLException, UnsupportedLookAndFeelException {
-        //LocateRegistry.createRegistry(PORT);
+        LocateRegistry.createRegistry(PORT);
         HibernateUtils.getSession().close();
         ServerGUI serverGUI = new ServerGUI();
         Naming.rebind("RMIChatServer", serverGUI.getServer());

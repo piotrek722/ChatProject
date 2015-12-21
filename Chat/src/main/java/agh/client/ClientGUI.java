@@ -1,8 +1,8 @@
 package agh.client;
 
 import agh.server.ServerInterface;
-import agh.userandmessage.model.Message;
-import agh.userandmessage.model.User;
+import agh.model.Message;
+import agh.model.User;
 
 import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
@@ -171,30 +171,6 @@ public class ClientGUI extends JFrame {
         }
     }
 
-    //////CLIENT
-    public class Client extends UnicastRemoteObject implements ClientInterface {
-
-        private static final long serialVersionUID = 1L;
-        private ServerInterface server;
-
-        public Client(ServerInterface server) throws RemoteException {
-            this.server = server;
-        }
-
-        @Override
-        public Message retreiveMessage(Message message) throws RemoteException {
-            return message;
-        }
-
-        public ServerInterface getServer() {
-            return server;
-        }
-
-        public void setServer(ServerInterface server) {
-            this.server = server;
-        }
-
-    }
     //////////////////////
 
     public class Login extends JDialog {

@@ -1,5 +1,5 @@
-import agh.core.client.ClientGUI;
-import agh.core.server.IServer;
+import agh.client.ClientGUI;
+import agh.server.ServerInterface;
 
 import javax.swing.*;
 import java.net.MalformedURLException;
@@ -10,7 +10,7 @@ import java.rmi.RemoteException;
 public class ClientDriver {
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException, UnsupportedLookAndFeelException {
         String serverUrl = "//localhost/RMIChatServer";
-        IServer server = (IServer) Naming.lookup(serverUrl);
+        ServerInterface server = (ServerInterface) Naming.lookup(serverUrl);
         new ClientGUI(server);
     }
 }

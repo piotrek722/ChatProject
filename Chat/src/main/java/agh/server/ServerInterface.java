@@ -20,4 +20,5 @@ public interface ServerInterface extends Remote {
 	Boolean deleteContact(User user, String contact) throws RemoteException;
 	ContactList getContacts(User user) throws RemoteException;
 	Conversation getMessages(User user, List<String> selectedContacts) throws RemoteException;
+    List<String> getOnlineUsers() throws RemoteException;
 }

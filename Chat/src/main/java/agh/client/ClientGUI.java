@@ -1,6 +1,9 @@
-package agh.core.client;
+package agh.client;
 
-import agh.core.server.IServer;
+import agh.server.ServerInterface;
+import agh.userandmessage.model.Message;
+import agh.userandmessage.model.User;
+
 import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.*;
@@ -19,14 +22,15 @@ public class ClientGUI extends JFrame {
     private JTabbedPane tabbedPane;
     private JPopupMenu popupMenu;
 
-    private IServer server;
+    private ServerInterface server;
     private Client client;
+    private User user;
 
     private static final Logger LOGGER = Logger.getLogger("Logger");
     private static final int CLIENT_WIDTH = 600;
     private static final int CLIENT_HEIGHT = 400;
 
-    public ClientGUI(final IServer server) throws RemoteException, UnsupportedLookAndFeelException {
+    public ClientGUI(final ServerInterface server) throws RemoteException, UnsupportedLookAndFeelException {
         super("Chat");
         UIManager.setLookAndFeel(new NimbusLookAndFeel());
         setContentPane(mainPanel);
@@ -49,6 +53,7 @@ public class ClientGUI extends JFrame {
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             //User&Messages
             //Unregister Client
+            //server.unregisterClient(user);
         }));
 
         new Login().setVisible(true);
@@ -117,7 +122,13 @@ public class ClientGUI extends JFrame {
     }
 
     private void onLogOut() {
-        //Logout
+        //LogOut
+        try {
+            server.logout(user);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
     }
 
     private void onDeleteContact() {
@@ -160,17 +171,31 @@ public class ClientGUI extends JFrame {
         }
     }
 
-    public class Client extends UnicastRemoteObject implements IClient {
-        private static final long serialVersionUID = 1L;
+    //////CLIENT
+    public class Client extends UnicastRemoteObject implements ClientInterface {
 
-        protected Client() throws RemoteException {
-            super();
-            //Login field assignment?
-            //Register Client
+        private static final long serialVersionUID = 1L;
+        private ServerInterface server;
+
+        public Client(ServerInterface server) throws RemoteException {
+            this.server = server;
         }
 
-        //User&Messages
+        @Override
+        public Message retreiveMessage(Message message) throws RemoteException {
+            return message;
+        }
+
+        public ServerInterface getServer() {
+            return server;
+        }
+
+        public void setServer(ServerInterface server) {
+            this.server = server;
+        }
+
     }
+    //////////////////////
 
     public class Login extends JDialog {
         private JPanel contentPane;
@@ -207,10 +232,22 @@ public class ClientGUI extends JFrame {
         private void onSignIn() {
             String login = loginTextField.getText();
             char[] password = passwordTextField.getPassword();
+            String pass = new String(password);
 
             //User&Messages
+            try {
+                user = server.login(client,login,pass);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
+
+            if (user == null) {
+                //wait till password is correct
+            }
 
             dispose();
+
         }
 
         private void onSignUp() {
@@ -262,6 +299,12 @@ public class ClientGUI extends JFrame {
             String lastName = lastNameTextField.getText();
 
             //User&Messages
+            String pass = new String(password);
+            try {
+                server.registerClient(login,pass,firstName,lastName);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
             dispose();
         }
 
@@ -317,11 +360,25 @@ public class ClientGUI extends JFrame {
             String firstName = firstNameTextField.getText();
             String lastName = lastNameTextField.getText();
             //User&Messages
+
+            try {
+                server.getOnlineUsers();        //showing all users online
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         }
 
         private void onAdd() {
+
+            //who to add?
             //User&Messages
             //Add
+
+//            try {
+//                server.addContact(user,contact);
+//            } catch (RemoteException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 
@@ -363,6 +420,9 @@ public class ClientGUI extends JFrame {
 
             //User&Messages
             //server.retrieveMessage or sth
+        //    try {
+        //        server.sendMessage(msg,date,user,....);
+        //    }
         }
 
         public void setLabelText(String text) {

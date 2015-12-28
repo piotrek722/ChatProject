@@ -1,8 +1,4 @@
-package agh.eventshandlers;
-
-import agh.router.Channel;
-import agh.router.DynamicRouter;
-import agh.router.Message;
+package agh.router;
 
 import java.util.HashMap;
 import java.util.Map;

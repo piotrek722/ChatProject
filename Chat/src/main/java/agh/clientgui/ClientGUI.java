@@ -21,7 +21,7 @@ public class ClientGUI extends JFrame {
     private static final int CLIENT_WIDTH = 600;
     private static final int CLIENT_HEIGHT = 400;
 
-    public ClientGUI(final IServer server) throws RemoteException, UnsupportedLookAndFeelException {
+    public ClientGUI() throws RemoteException, UnsupportedLookAndFeelException {
         super("Chat");
         UIManager.setLookAndFeel(new NimbusLookAndFeel());
         setContentPane(mainPanel);

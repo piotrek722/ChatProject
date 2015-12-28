@@ -1,4 +1,4 @@
-package agh.eventshandlers;
+package agh.guievents;
 
 import agh.router.Channel;
 import agh.server.IServer;

@@ -1,5 +1,6 @@
 package agh.clientgui;
 
+import agh.router.EventDispatcher;
 import agh.server.IServer;
 import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
@@ -17,12 +18,19 @@ public class ClientGUI extends JFrame {
     private JTabbedPane tabbedPane;
     private JPopupMenu popupMenu;
 
+    private Search search;
+
+    private EventDispatcher dispatcher;
+
     private static final Logger LOGGER = Logger.getLogger("Logger");
     private static final int CLIENT_WIDTH = 600;
+
     private static final int CLIENT_HEIGHT = 400;
 
-    public ClientGUI() throws RemoteException, UnsupportedLookAndFeelException {
+    public ClientGUI(EventDispatcher dispatcher) throws RemoteException, UnsupportedLookAndFeelException {
         super("Chat");
+        this.search = new Search();
+        this.dispatcher = dispatcher;
         UIManager.setLookAndFeel(new NimbusLookAndFeel());
         setContentPane(mainPanel);
         setSize(CLIENT_WIDTH, CLIENT_HEIGHT);
@@ -51,11 +59,10 @@ public class ClientGUI extends JFrame {
 
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
             //User&Messages
-            //Unregister Client
         }));
 
-        new Login().setVisible(true);
-        setVisible(true);
+        //login.setVisible(true);
+        //setVisible(true);
     }
 
     private void createMenuBar(){
@@ -63,7 +70,7 @@ public class ClientGUI extends JFrame {
         JMenu file = new JMenu("Menu");
 
         JMenuItem searchContact = new JMenuItem("Search contact");
-        searchContact.addActionListener(e ->  new Search().setVisible(true));
+        searchContact.addActionListener(e ->  search.setVisible(true));
         searchContact.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK));
         file.add(searchContact);
 
@@ -125,6 +132,12 @@ public class ClientGUI extends JFrame {
 
     private void onLogOut() {
         //Logout
+        this.dispose();
+        try {
+            new Login(dispatcher).setVisible(true);
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
     }
 
     private void onDeleteContact() {

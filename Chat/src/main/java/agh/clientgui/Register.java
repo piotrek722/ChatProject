@@ -1,8 +1,12 @@
 package agh.clientgui;
 
+import agh.router.EventDispatcher;
+
 import javax.swing.*;
+import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.rmi.RemoteException;
 
 public class Register extends JDialog {
     private JPanel contentPane;
@@ -12,11 +16,16 @@ public class Register extends JDialog {
     private JPasswordField passwordTextField;
     private JTextField firstNameTextField;
     private JTextField lastNameTextField;
+    private JLabel serverMsgLabel;
+
+    private EventDispatcher dispatcher;
 
     private static final int REGISTER_WIDTH = 400;
     private static final int REGISTER_HEIGHT = 400;
 
-    public Register() {
+    public Register(EventDispatcher dispatcher) throws UnsupportedLookAndFeelException {
+        this.dispatcher = dispatcher;
+        UIManager.setLookAndFeel(new NimbusLookAndFeel());
         setContentPane(contentPane);
         setModal(true);
         setSize(REGISTER_WIDTH, REGISTER_HEIGHT);
@@ -46,12 +55,24 @@ public class Register extends JDialog {
         String firstName = firstNameTextField.getText();
         String lastName = lastNameTextField.getText();
 
+        try {
+            new ClientGUI(dispatcher);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
+
         //User&Messages
         dispose();
     }
 
     private void onSignIn() {
         dispose();
-        new Login().setVisible(true);
+        try {
+            new Login(dispatcher).setVisible(true);
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -1,3 +1,4 @@
+import agh.server.Server;
 import agh.server.ServerGUI;
 
 import javax.swing.*;
@@ -10,7 +11,6 @@ public class ServerDriver {
     private static final int PORT = 1099;
     public static void main(String[] args) throws RemoteException, MalformedURLException, UnsupportedLookAndFeelException {
         LocateRegistry.createRegistry(PORT);
-        ServerGUI serverGUI = new ServerGUI();
-        Naming.rebind("RMIChatServer", serverGUI.getServer());
+        Naming.rebind("RMIChatServer", new Server());
     }
 }

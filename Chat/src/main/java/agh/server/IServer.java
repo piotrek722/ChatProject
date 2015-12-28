@@ -1,4 +1,4 @@
-package agh.core.server;
+package agh.server;
 
 import java.io.Serializable;
 import java.rmi.Remote;

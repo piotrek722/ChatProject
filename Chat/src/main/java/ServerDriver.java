@@ -1,4 +1,4 @@
-import agh.core.server.ServerGUI;
+import agh.server.ServerGUI;
 
 import javax.swing.*;
 import java.net.MalformedURLException;

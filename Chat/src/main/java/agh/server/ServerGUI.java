@@ -1,13 +1,9 @@
-package agh.core.server;
+package agh.server;
 
-import agh.core.client.IClient;
 import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.event.*;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.*;
 
 public class ServerGUI extends JFrame {
@@ -62,22 +58,9 @@ public class ServerGUI extends JFrame {
         textArea.append(servermsg + "\n");
 
         //User&Messages
-        //Broadcast or sth
     }
 
     public Server getServer() {
         return server;
-    }
-
-    public class Server extends UnicastRemoteObject implements IServer {
-        private static final long serialVersionUID = 1L;
-        List<IClient> clients;
-
-        public Server() throws RemoteException {
-            super();
-            clients = new ArrayList<>();
-        }
-
-        //User&Messages
     }
 }

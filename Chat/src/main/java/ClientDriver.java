@@ -1,5 +1,5 @@
-import agh.core.client.ClientGUI;
-import agh.core.server.IServer;
+import agh.gui.ClientGUI;
+import agh.server.IServer;
 
 import javax.swing.*;
 import java.net.MalformedURLException;

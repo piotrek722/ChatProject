@@ -1,5 +1,5 @@
 package agh.router;
 
-public interface Channel <E extends Message> {
-    void dispatch(E message);
+public interface Channel <M extends Message> {
+    void dispatch(M message);
 }

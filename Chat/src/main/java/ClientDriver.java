@@ -1,4 +1,4 @@
-import agh.gui.ClientGUI;
+import agh.clientgui.ClientGUI;
 import agh.server.IServer;
 
 import javax.swing.*;

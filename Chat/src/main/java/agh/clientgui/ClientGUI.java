@@ -1,6 +1,5 @@
-package agh.gui;
+package agh.clientgui;
 
-import agh.client.Client;
 import agh.server.IServer;
 import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;

@@ -1,4 +1,4 @@
-package agh.gui;
+package agh.clientgui;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,5 +1,6 @@
 package agh.clientgui;
 
+import agh.events.SwitchLoginRegisterEvent;
 import agh.router.EventDispatcher;
 
 import javax.swing.*;
@@ -8,28 +9,29 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.rmi.RemoteException;
 
-public class Register extends JDialog {
+public class LoginDialog extends JDialog {
     private JPanel contentPane;
-    private JButton signUpButton;
     private JButton signInButton;
     private JTextField loginTextField;
     private JPasswordField passwordTextField;
-    private JTextField firstNameTextField;
-    private JTextField lastNameTextField;
+    private JButton signUpButton;
     private JLabel serverMsgLabel;
 
     private EventDispatcher dispatcher;
 
-    private static final int REGISTER_WIDTH = 400;
-    private static final int REGISTER_HEIGHT = 400;
+    private static final int LOGIN_WIDTH = 300;
+    private static final int LOGIN_HEIGHT = 300;
 
-    public Register(EventDispatcher dispatcher) throws UnsupportedLookAndFeelException {
-        this.dispatcher = dispatcher;
+    public LoginDialog(EventDispatcher dispatcher) throws UnsupportedLookAndFeelException {
         UIManager.setLookAndFeel(new NimbusLookAndFeel());
+        this.dispatcher = dispatcher;
         setContentPane(contentPane);
         setModal(true);
-        setSize(REGISTER_WIDTH, REGISTER_HEIGHT);
+        setSize(LOGIN_WIDTH, LOGIN_HEIGHT);
         setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+
+        signInButton.addActionListener(e -> onSignIn());
+        signUpButton.addActionListener(e -> onSignUp());
 
         KeyAdapter keyadapter = new KeyAdapter() {
             @Override
@@ -40,20 +42,13 @@ public class Register extends JDialog {
             }
         };
 
-        signUpButton.addActionListener(e -> onSignUp());
-        signInButton.addActionListener(e -> onSignIn());
-
         loginTextField.addKeyListener(keyadapter);
         passwordTextField.addKeyListener(keyadapter);
-        firstNameTextField.addKeyListener(keyadapter);
-        lastNameTextField.addKeyListener(keyadapter);
     }
 
-    private void onSignUp() {
+    private void onSignIn() {
         String login = loginTextField.getText();
         char[] password = passwordTextField.getPassword();
-        String firstName = firstNameTextField.getText();
-        String lastName = lastNameTextField.getText();
 
         try {
             new ClientGUI(dispatcher);
@@ -63,16 +58,10 @@ public class Register extends JDialog {
             e.printStackTrace();
         }
 
-        //User&Messages
         dispose();
     }
 
-    private void onSignIn() {
-        dispose();
-        try {
-            new Login(dispatcher).setVisible(true);
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
+    private void onSignUp() {
+        dispatcher.dispatch(new SwitchLoginRegisterEvent());
     }
 }

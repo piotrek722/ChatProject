@@ -1,7 +1,8 @@
 package agh.clientgui;
 
+import agh.events.ShowSearchEvent;
 import agh.router.EventDispatcher;
-import agh.server.IServer;
+
 import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.*;
@@ -18,8 +19,6 @@ public class ClientGUI extends JFrame {
     private JTabbedPane tabbedPane;
     private JPopupMenu popupMenu;
 
-    private Search search;
-
     private EventDispatcher dispatcher;
 
     private static final Logger LOGGER = Logger.getLogger("Logger");
@@ -29,7 +28,6 @@ public class ClientGUI extends JFrame {
 
     public ClientGUI(EventDispatcher dispatcher) throws RemoteException, UnsupportedLookAndFeelException {
         super("Chat");
-        this.search = new Search();
         this.dispatcher = dispatcher;
         UIManager.setLookAndFeel(new NimbusLookAndFeel());
         setContentPane(mainPanel);
@@ -61,7 +59,6 @@ public class ClientGUI extends JFrame {
             //User&Messages
         }));
 
-        //login.setVisible(true);
         //setVisible(true);
     }
 
@@ -70,7 +67,7 @@ public class ClientGUI extends JFrame {
         JMenu file = new JMenu("Menu");
 
         JMenuItem searchContact = new JMenuItem("Search contact");
-        searchContact.addActionListener(e ->  search.setVisible(true));
+        searchContact.addActionListener(e ->  onSearch());
         searchContact.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F, KeyEvent.CTRL_DOWN_MASK));
         file.add(searchContact);
 
@@ -125,6 +122,10 @@ public class ClientGUI extends JFrame {
         contactJList = new JList(contacts);
     }
 
+    private void onSearch() {
+        dispatcher.dispatch(new ShowSearchEvent());
+    }
+
     private void onExit() {
         onLogOut();
         //Exit
@@ -134,7 +135,7 @@ public class ClientGUI extends JFrame {
         //Logout
         this.dispose();
         try {
-            new Login(dispatcher).setVisible(true);
+            new LoginDialog(dispatcher).setVisible(true);
         } catch (UnsupportedLookAndFeelException e) {
             e.printStackTrace();
         }

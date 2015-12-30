@@ -1,10 +1,13 @@
 package agh.clientgui;
 
+import agh.events.SearchEvent;
+import agh.router.EventDispatcher;
+
 import javax.swing.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
-public class Search extends JDialog {
+public class SearchDialog extends JDialog {
     private JPanel contentPane;
     private JTextField nickTextField;
     private JTextField lastNameTextField;
@@ -13,10 +16,13 @@ public class Search extends JDialog {
     private JButton addButton;
     private JTable resultsTable;
 
+    private EventDispatcher dispatcher;
+
     private static final int SEARCH_WIDTH = 500;
     private static final int SEARCH_HEIGHT = 200;
 
-    public Search() {
+    public SearchDialog(EventDispatcher dispatcher) {
+        this.dispatcher = dispatcher;
         setContentPane(contentPane);
         setModal(true);
         setSize(SEARCH_WIDTH, SEARCH_HEIGHT);
@@ -49,7 +55,12 @@ public class Search extends JDialog {
         String nick = nickTextField.getText();
         String firstName = firstNameTextField.getText();
         String lastName = lastNameTextField.getText();
-        //User&Messages
+
+        dispatcher.dispatch(new SearchEvent(nick, firstName, lastName));
+    }
+
+    public void displayResultsOfSearch() {
+        //Method for handler
     }
 
     private void onAdd() {

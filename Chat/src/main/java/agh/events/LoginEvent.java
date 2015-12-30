@@ -1,4 +1,4 @@
-package agh.guievents;
+package agh.events;
 
 import agh.router.Event;
 import sun.security.util.Password;

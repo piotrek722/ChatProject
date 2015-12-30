@@ -1,5 +1,6 @@
-package agh.guievents;
+package agh.handlers;
 
+import agh.events.SendMessageEvent;
 import agh.router.Channel;
 import agh.server.IServer;
 

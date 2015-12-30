@@ -1,15 +1,14 @@
-package agh.guievents;
+package agh.events;
 
 import agh.router.Event;
-import sun.security.util.Password;
 
 public class RegisterEvent extends Event {
     private String login;
     private String fname;
     private String lname;
-    private Password password;
+    private String password;
 
-    public RegisterEvent(String login, String fname, String lname, Password password) {
+    public RegisterEvent(String login, String fname, String lname, String password) {
         this.login = login;
         this.fname = fname;
         this.lname = lname;
@@ -28,7 +27,7 @@ public class RegisterEvent extends Event {
         return lname;
     }
 
-    public Password getPassword() {
+    public String getPassword() {
         return password;
     }
 }

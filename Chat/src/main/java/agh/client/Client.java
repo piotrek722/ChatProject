@@ -1,14 +1,14 @@
 package agh.client;
 
-import agh.router.EventDispatcher;
+import agh.router.DefaultEventDispatcher;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 
 public class Client extends UnicastRemoteObject implements IClient {
     private static final long serialVersionUID = 1L;
-    private EventDispatcher dispatcher;
+    private DefaultEventDispatcher dispatcher;
 
-    public Client(EventDispatcher dispatcher) throws RemoteException {
+    public Client(DefaultEventDispatcher dispatcher) throws RemoteException {
         super();
         this.dispatcher = dispatcher;
     }

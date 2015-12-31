@@ -4,6 +4,7 @@ import agh.client.events.SearchEvent;
 import agh.router.DefaultEventDispatcher;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -15,6 +16,7 @@ public class SearchDialog extends JDialog {
     private JButton searchButton;
     private JButton addButton;
     private JTable resultsTable;
+    private DefaultTableModel model;
 
     private DefaultEventDispatcher dispatcher;
 
@@ -23,6 +25,7 @@ public class SearchDialog extends JDialog {
 
     public SearchDialog(DefaultEventDispatcher dispatcher) {
         this.dispatcher = dispatcher;
+        this.model = new DefaultTableModel();
         setContentPane(contentPane);
         setModal(true);
         setSize(SEARCH_WIDTH, SEARCH_HEIGHT);
@@ -59,11 +62,25 @@ public class SearchDialog extends JDialog {
         dispatcher.dispatch(new SearchEvent(nick, firstName, lastName));
     }
 
-    public void displayResultsOfSearch() {
-        //Method for handler
-    }
-
     private void onAdd() {
         //User&Messages
+    }
+
+    public void displayResultsOfSearch() {
+        clearJTable();
+        //sth
+    }
+
+    public void clearJTable() {
+        for (int i = 0; i < model.getRowCount(); i++) {
+            model.removeRow(i);
+        }
+    }
+
+    public void clearDialog() {
+        clearJTable();
+        nickTextField.setText("");
+        firstNameTextField.setText("");
+        lastNameTextField.setText("");
     }
 }

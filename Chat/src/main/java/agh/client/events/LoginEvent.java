@@ -1,13 +1,12 @@
 package agh.client.events;
 
 import agh.router.DefaultEvent;
-import sun.security.util.Password;
 
 public class LoginEvent extends DefaultEvent {
     private String login;
-    private Password password;
+    private String password;
 
-    public LoginEvent(String login, Password password) {
+    public LoginEvent(String login, String password) {
         this.login = login;
         this.password = password;
     }
@@ -16,7 +15,7 @@ public class LoginEvent extends DefaultEvent {
         return login;
     }
 
-    public Password getPassword() {
+    public String getPassword() {
         return password;
     }
 }

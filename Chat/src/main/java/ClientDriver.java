@@ -21,19 +21,32 @@ public class ClientDriver {
         LoginDialog login = new LoginDialog(eventDispatcher);
         RegisterDialog register = new RegisterDialog(eventDispatcher);
         SearchDialog searchDialog = new SearchDialog(eventDispatcher);
-        AccountSettingsDialog accountSettings = new AccountSettingsDialog();
+        AccountSettingsDialog accountSettings = new AccountSettingsDialog(eventDispatcher);
         Client client = new Client(eventDispatcher);
 
+        //ClientGUI events
         eventDispatcher.registerChannel(DeleteContactEvent.class, new DeleteContactHandler(server));
-        eventDispatcher.registerChannel(LoginEvent.class, new LoginHandler(server, client, login, clientGUI));
         eventDispatcher.registerChannel(LogoutEvent.class, new LogoutHandler(clientGUI, login));
-        eventDispatcher.registerChannel(ReceiveMessageEvent.class, new ReceiveMessageHandler(clientGUI));
-        eventDispatcher.registerChannel(RegisterEvent.class, new RegisterHandler(server, register, login));
-        eventDispatcher.registerChannel(SearchEvent.class, new SearchHandler(server, searchDialog));
-        eventDispatcher.registerChannel(SendMessageEvent.class, new SendMessageHandler(server));
         eventDispatcher.registerChannel(ShowAccountSettingsEvent.class, new ShowAccountSettingsHandler(accountSettings));
         eventDispatcher.registerChannel(ShowSearchEvent.class, new ShowSearchHandler(searchDialog));
-        eventDispatcher.registerChannel(SwitchLoginRegisterEvent.class, new SwitchLoginRegisterHandler(login, register));
+        //ConversationWindow events
+        eventDispatcher.registerChannel(SendMessageEvent.class, new SendMessageHandler(server));
+        eventDispatcher.registerChannel(GetConversationEvent.class, new GetConversationHandler(server));
+        //LoginDialog events
+        eventDispatcher.registerChannel(LoginEvent.class, new LoginHandler(server, client, login, clientGUI));
+        eventDispatcher.registerChannel(SwitchLoginToRegisterEvent.class, new SwitchLoginToRegisterHandler(login, register));
+        eventDispatcher.registerChannel(GetContactsEvent.class, new GetContactsHandler(server, clientGUI));
+        //RegisterDialog events
+        eventDispatcher.registerChannel(RegisterEvent.class, new RegisterHandler(server, register, login));
+        eventDispatcher.registerChannel(SwitchRegisterToLoginEvent.class, new SwitchRegisterToLoginHandler(register, login));
+        //SearchDialog events
+        eventDispatcher.registerChannel(SearchEvent.class, new SearchHandler(server, searchDialog));
+        eventDispatcher.registerChannel(AddContactEvent.class, new AddContactHandler(server, clientGUI));
+        //AccountSettingsDialog events
+        eventDispatcher.registerChannel(SaveAccountChangesEvent.class, new SaveAccountChangesHandler(server, accountSettings));
+        eventDispatcher.registerChannel(ChangePasswordEvent.class, new ChangePasswordHandler(server, accountSettings));
+        //Client events
+        eventDispatcher.registerChannel(ReceiveMessageEvent.class, new ReceiveMessageHandler(clientGUI));
 
         login.setVisible(true);
     }

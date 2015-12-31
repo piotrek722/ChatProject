@@ -1,10 +1,13 @@
 package agh.client.gui;
 
-import agh.client.events.SwitchLoginRegisterEvent;
+import agh.client.events.RegisterEvent;
+import agh.client.events.SwitchLoginToRegisterEvent;
+import agh.client.events.SwitchRegisterToLoginEvent;
 import agh.router.DefaultEventDispatcher;
 
 import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.rmi.RemoteException;
@@ -52,23 +55,30 @@ public class RegisterDialog extends JDialog {
 
     private void onSignUp() {
         String login = loginTextField.getText();
-        char[] password = passwordTextField.getPassword();
+        String password = passwordTextField.getPassword().toString();
         String firstName = firstNameTextField.getText();
         String lastName = lastNameTextField.getText();
 
-        try {
-            new ClientGUI(dispatcher);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
-
-        //User&Messages
-        dispose();
+        dispatcher.dispatch(new RegisterEvent(login, firstName, lastName, password));
     }
 
     private void onSignIn() {
-        dispatcher.dispatch(new SwitchLoginRegisterEvent());
+        dispatcher.dispatch(new SwitchRegisterToLoginEvent());
+    }
+
+    public void setServerMsgLabelText(String text) {
+        serverMsgLabel.setText(text);
+        serverMsgLabel.setForeground(Color.RED);
+    }
+
+    public void clearPasswordField() {
+        passwordTextField.setText("");
+    }
+
+    public void clearDialog() {
+        loginTextField.setText("");
+        passwordTextField.setText("");
+        firstNameTextField.setText("");
+        lastNameTextField.setText("");
     }
 }

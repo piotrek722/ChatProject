@@ -1,7 +1,6 @@
 package agh.client.gui;
 
-import agh.client.events.ShowAccountSettingsEvent;
-import agh.client.events.ShowSearchEvent;
+import agh.client.events.*;
 import agh.router.DefaultEventDispatcher;
 
 import javax.swing.*;
@@ -12,6 +11,7 @@ import java.rmi.RemoteException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ClientGUI extends JFrame {
@@ -22,14 +22,16 @@ public class ClientGUI extends JFrame {
     private JPopupMenu popupMenu;
 
     private DefaultEventDispatcher dispatcher;
+    private List<ConversationWindow> conversationWindows;
 
     private static final Logger LOGGER = Logger.getLogger("Logger");
-    private static final int CLIENT_WIDTH = 600;
+    private static final int CLIENT_WIDTH = 200;
     private static final int CLIENT_HEIGHT = 400;
 
     public ClientGUI(DefaultEventDispatcher dispatcher) throws RemoteException, UnsupportedLookAndFeelException {
         super("Chat");
         this.dispatcher = dispatcher;
+        this.conversationWindows = new ArrayList<>();
         UIManager.setLookAndFeel(new NimbusLookAndFeel());
         setContentPane(mainPanel);
         setSize(CLIENT_WIDTH, CLIENT_HEIGHT);
@@ -38,18 +40,18 @@ public class ClientGUI extends JFrame {
         createMenuBar();
         createPopupMenu();
 
-        /*contacts.addElement("Adrian Puchacki");
+        contacts.addElement("Adrian Puchacki");
         contacts.addElement("Jan Paweł");
         contacts.addElement("Jan Paweł 2");
         contacts.addElement("Kuba Nowicki");
         contacts.addElement("Waldemar Walasik");
-        contacts.addElement("Wojciech Puczyk");*/
+        contacts.addElement("Wojciech Puczyk");
 
         contactJList.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-                    startConversationWithChosenContacts();
+                    openConversationWindow();
                 } else if (e.getKeyChar() == KeyEvent.VK_DELETE) {
                     onDeleteContact();
                 }
@@ -95,7 +97,7 @@ public class ClientGUI extends JFrame {
         this.popupMenu = new JPopupMenu();
 
         JMenuItem startConversation = new JMenuItem("Start conversation");
-        startConversation.addActionListener(e -> startConversationWithChosenContacts());
+        startConversation.addActionListener(e -> openConversationWindow());
         popupMenu.add(startConversation);
 
         JMenuItem delete = new JMenuItem("Delete");
@@ -121,6 +123,22 @@ public class ClientGUI extends JFrame {
         contactJList = new JList(contacts);
     }
 
+    private void sortJlist() {
+        Object[] elems = contacts.toArray();
+        contacts.removeAllElements();
+
+        Arrays.sort(elems);
+        for (Object elem : elems) {
+            contacts.addElement((String) elem);
+        }
+    }
+
+    private void clearClientWindow() {
+        contacts.removeAllElements();
+        conversationWindows.removeAll(conversationWindows);
+        //User field
+    }
+
     private void onSearch() {
         dispatcher.dispatch(new ShowSearchEvent());
     }
@@ -135,108 +153,48 @@ public class ClientGUI extends JFrame {
     }
 
     private void onLogOut() {
-        //dispatcher
+        clearClientWindow(); //Do Dispatchera?
+        dispatcher.dispatch(new LogoutEvent());
     }
 
     private void onDeleteContact() {
+        //Check types!
         List<Object> values = contactJList.getSelectedValuesList();
-        //dispatcher
+        dispatcher.dispatch(new DeleteContactEvent(values));
         for (Object elem : values) {
             contacts.removeElement(elem);
         }
     }
 
-    private void startConversationWithChosenContacts() {
-        List<String> chosenContacts = new ArrayList<>();
-        String text = "";
+    public void addContact(String contact) {
+        contacts.addElement(contact);
+        sortJlist();
+    }
+
+    private void openConversationWindow() {
+        List<String> selectedContacts = new ArrayList<>();
+        //String text = "";
 
         for (int index : contactJList.getSelectedIndices()) {
-            chosenContacts.add(contacts.elementAt(index));
-            text += contacts.elementAt(index) + "; ";
+            selectedContacts.add(contacts.elementAt(index));
+            //text += contacts.elementAt(index) + "; ";
         }
 
-        //Check if conversationTab for those users exists
-        //If exists
-            //If isVisible true -> setSelected
-            //Else setVisible true & setSelected
-        //Else Create & setSelected
-
-        ConversationTab conversationTab = new ConversationTab(); //Component for Tab
-        conversationTab.setContacts(chosenContacts); //Contacts for conversation tab
-        conversationTab.setLabelText(text); //List of contacts for conversation tab
-
-        //Check if the conversationTab is already opened
-        for (int i = 0; i < tabbedPane.getTabCount(); i++) {
-            List<String> conversationContactsList;
-            conversationContactsList = ((ConversationTab)tabbedPane.getComponentAt(i)).getContacts();
-            if (Arrays.equals(chosenContacts.toArray(), conversationContactsList.toArray())) {
-                tabbedPane.setSelectedIndex(i);
+        for (ConversationWindow window : conversationWindows) {
+            List<String> windowContactList = window.getUsers();
+            if (Arrays.equals(windowContactList.toArray(), selectedContacts.toArray())) {
+                if (!window.isVisible()) {
+                    window.setVisible(true);
+                }
+                window.toFront();
                 return;
             }
         }
 
-        //It is not opened
-        if (chosenContacts.size() == 1) {
-            tabbedPane.addTab(chosenContacts.get(0), conversationTab);
-            tabbedPane.setSelectedComponent(conversationTab);
-        } else if (chosenContacts.size() > 1){
-            tabbedPane.addTab("Conference", conversationTab);
-            tabbedPane.setSelectedComponent(conversationTab);
-        }
-    }
-
-    public class ConversationTab extends JPanel {
-        private JTextArea conversationTextArea;
-        private JLabel usersLabel;
-        private JPanel panel;
-        private JButton closeButton;
-        private JTextField messageTextField;
-        private JButton sendButton;
-        private List<String> contacts; //Chosen from JList
-        private final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
-
-        public ConversationTab() {
-            this.setLayout(new GridLayout());
-            this.add(panel);
-
-            sendButton.addActionListener(e -> sendMessage());
-            closeButton.addActionListener(e -> closeTab());
-
-            messageTextField.addKeyListener(new KeyAdapter() {
-                @Override
-                public void keyTyped(KeyEvent e) {
-                    if (e.getKeyChar() == KeyEvent.VK_ENTER)
-                        sendMessage();
-                }
-            });
-        }
-
-        private void closeTab() {
-            tabbedPane.remove(this);
-            //tabbedPane.setVisible(false);
-        }
-
-        private void sendMessage() {
-            //String user
-            Date date = new Date();
-            String msg = messageTextField.getText();
-
-            //dispatcher
-
-            messageTextField.setText("");
-            conversationTextArea.append(simpleDateFormat.format(date) + msg + "\n");
-        }
-
-        public void setLabelText(String text) {
-            this.usersLabel.setText(text);
-        }
-
-        public List<String> getContacts() {
-            return contacts;
-        }
-
-        public void setContacts(List<String> contacts) {
-            this.contacts = contacts;
+        try {
+            conversationWindows.add(new ConversationWindow(selectedContacts, dispatcher));
+        } catch (UnsupportedLookAndFeelException e) {
+            LOGGER.log(Level.SEVERE, e.toString());
         }
     }
 }

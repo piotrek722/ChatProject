@@ -9,6 +9,11 @@ public class GetContactsHandler implements Handler<GetContactsEvent>{
     private IServer server;
     private ClientGUI clientGUI;
 
+    public GetContactsHandler(IServer server, ClientGUI clientGUI) {
+        this.server = server;
+        this.clientGUI = clientGUI;
+    }
+
     @Override
     public void dispatch(GetContactsEvent message) {
         //get from server contacts for User

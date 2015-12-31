@@ -1,10 +1,12 @@
 package agh.client.gui;
 
-import agh.client.events.SwitchLoginRegisterEvent;
+import agh.client.events.LoginEvent;
+import agh.client.events.SwitchLoginToRegisterEvent;
 import agh.router.DefaultEventDispatcher;
 
 import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.rmi.RemoteException;
@@ -48,20 +50,26 @@ public class LoginDialog extends JDialog {
 
     private void onSignIn() {
         String login = loginTextField.getText();
-        char[] password = passwordTextField.getPassword();
+        String password = passwordTextField.getPassword().toString();
 
-        try {
-            new ClientGUI(dispatcher);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
-
-        dispose();
+        dispatcher.dispatch(new LoginEvent(login, password));
     }
 
     private void onSignUp() {
-        dispatcher.dispatch(new SwitchLoginRegisterEvent());
+        dispatcher.dispatch(new SwitchLoginToRegisterEvent());
+    }
+
+    public void setServerMsgLabelText(String text) {
+        serverMsgLabel.setText(text);
+        serverMsgLabel.setForeground(Color.RED);
+    }
+
+    public void clearPasswordField() {
+        passwordTextField.setText("");
+    }
+
+    public void clearDialog() {
+        loginTextField.setText("");
+        passwordTextField.setText("");
     }
 }

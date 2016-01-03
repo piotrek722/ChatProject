@@ -1,18 +1,15 @@
 import agh.client.Client;
-import agh.persistance.HibernateUtils;
+import agh.model.User;
+import agh.server.Server;
 import agh.server.ServerInterface;
-import agh.userandmessage.model.User;
-import org.hibernate.Session;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import javax.transaction.Transactional;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,12 +22,14 @@ import static org.junit.Assert.*;
 
 public class ServerTest {
 
-    private ServerInterface server;
-    private Client client;
+    private static ServerInterface server;
+    private static Client client;
 
-    @Before
-    public void before()  throws MalformedURLException, RemoteException, NotBoundException {
+    @BeforeClass
+    public static void beforeClass()  throws MalformedURLException, RemoteException, NotBoundException {
 
+        LocateRegistry.createRegistry(1099);
+        Naming.rebind("RMIServer", new Server("src/test/resources/hibernate.cfg.xml"));
         String serverURL = "rmi://localhost/RMIServer";
         server = (ServerInterface) Naming.lookup(serverURL);
         client = new Client(server);
@@ -48,19 +47,20 @@ public class ServerTest {
     @Test
     public void unregisterUserTest() throws RemoteException {
 
-        User user2 = new User("User2","password","Name","LastName");
+        User user2 = new User("User2", "password", "Name", "LastName");
         User user3 = new User("User3","password","Name","LastName");
         server.registerClient("User2", "password", "Name", "LastName");
 
-        assertTrue(server.unregisterClient(user2));
         assertFalse(server.unregisterClient(user3));
+        assertTrue(server.unregisterClient(user2));
+
+
 
     }
 
     @Test
     public void loginUserTest() throws RemoteException {
 
-        User user4 = new User("User4","password", "Name", "LastName");
         server.registerClient("User4", "password", "Name", "LastName");
 
         assertNotNull(server.login(client,"User4", "password"));
@@ -87,10 +87,10 @@ public class ServerTest {
         server.registerClient("User7", "password", "Name", "LastName");
         server.registerClient("User8", "password", "Name", "LastName");
 
-        assertTrue(server.addContact(user7,user8.getLogin()));
         assertTrue(server.addContact(user7,user7.getLogin()));
+        assertTrue(server.addContact(user7,user8.getLogin()));
         assertTrue(server.addContact(user8,user7.getLogin()));
-        assertTrue(server.addContact(user8,user7.getLogin()));
+        assertTrue(server.addContact(user8,user8.getLogin()));
         assertFalse(server.addContact(user8,null));
     }
 

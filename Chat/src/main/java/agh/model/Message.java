@@ -1,4 +1,4 @@
-package agh.userandmessage.model;
+package agh.model;
 
 import javax.persistence.*;
 import java.io.Serializable;

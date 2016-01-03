@@ -2,10 +2,10 @@ package agh.server;
 
 import agh.client.ClientInterface;
 import agh.persistance.HibernateUtils;
-import agh.userandmessage.model.ContactList;
-import agh.userandmessage.model.Conversation;
-import agh.userandmessage.model.Message;
-import agh.userandmessage.model.User;
+import agh.model.ContactList;
+import agh.model.Conversation;
+import agh.model.Message;
+import agh.model.User;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -19,8 +19,14 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 	private static final long serialVersionUID = 1L;
 	private Map<String, ClientInterface> usersOnline;
 
-	protected Server() throws RemoteException {
+	public Server() throws RemoteException {
 		usersOnline = new HashMap<>();
+		HibernateUtils.setNewConfiguration("Chat/src/main/resources/hibernate.cfg.xml");
+	}
+
+	public Server(String configurationPath) throws RemoteException {
+		usersOnline = new HashMap<>();
+		HibernateUtils.setNewConfiguration(configurationPath);
 	}
 
 	@Override
@@ -49,15 +55,16 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		Boolean isSuccessful = false;
 		Session session = HibernateUtils.getSession();
 		Transaction transaction = session.beginTransaction();
-		
+
 		String command = "select u from User u where u.login like :login";
 		Query query = session.createQuery(command).setParameter("login", user.getLogin());
 		List<User> found = query.list();
 
-		if(found.size() == 1) {
+		if(!found.isEmpty()) {
 			session.delete(found.get(0));
 			isSuccessful = true;
 		}
+
         transaction.commit();
 
 		session.close();

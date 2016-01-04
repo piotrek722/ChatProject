@@ -6,9 +6,11 @@ import agh.model.ContactList;
 import agh.model.Conversation;
 import agh.model.Message;
 import agh.model.User;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -253,5 +255,67 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		Conversation conversation = new Conversation();
 		conversation.setMessages(messages);
 		return conversation;
+	}
+
+	@Override
+	public List<User> getUsersOnline() throws RemoteException {
+
+		List<String> users = new ArrayList<>();
+		users.addAll(usersOnline.keySet());
+
+		Session session = HibernateUtils.getSession();
+		Transaction transaction = session.beginTransaction();
+
+		String command =  "select u from User u where u.login in :users";
+		Query query = session.createQuery(command).setParameterList("users", users);
+		List<User> usersOnline = query.list();
+
+		transaction.commit();
+		session.close();
+
+		return usersOnline;
+	}
+
+	@Override
+	public List<User> getAllUsers() throws RemoteException {
+
+		Session session = HibernateUtils.getSession();
+		Transaction transaction = session.beginTransaction();
+
+		Query query = session.createQuery("select u from User u");
+		List<User> users = query.list();
+
+		transaction.commit();
+		session.close();
+
+		return users;
+	}
+
+	@Override
+	public List<User> findUser(String login, String name, String lastName) throws RemoteException {
+
+		Session session = HibernateUtils.getSession();
+		Transaction transaction = session.beginTransaction();
+
+		Criteria criteria = session.createCriteria(User.class);
+
+		if(!login.equals("")){
+			criteria.add(Restrictions.like("login",login));
+		}
+
+		if(!name.equals("")){
+			criteria.add(Restrictions.like("name",name));
+		}
+
+		if(!lastName.equals("")){
+			criteria.add(Restrictions.like("lastName", lastName));
+		}
+
+		List<User> users = criteria.list();
+
+		transaction.commit();
+		session.close();
+
+		return users;
 	}
 }

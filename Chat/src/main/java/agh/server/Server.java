@@ -173,9 +173,11 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 			}
 		}
 
-        user.getContactList().addContact(contactToAdd);
+        user.getContactList().getUserList().add(contactToAdd);
 
-        session.merge(user);
+        //user.getContactList().addContact(contactToAdd);
+
+        session.saveOrUpdate(user);
 		
 		transaction.commit();
 		session.close();
@@ -241,7 +243,7 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		List<User> selectedUsers = query.list();
 
 		command = "select m from Message m inner join m.receivers where" +
-				" m.sender.id like :sender and size(m.receivers) <> (:size)" +
+				" m.sender.login like :sender and size(m.receivers) <> (:size)" +
 				"and exists (select u from User u where u in (:participants))" +
 				"group by m order by m.date ";
 

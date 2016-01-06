@@ -242,12 +242,16 @@ public class Server extends UnicastRemoteObject implements ServerInterface {
 		Query query = session.createQuery(command).setParameterList("contacts", selectedContacts);
 		List<User> selectedUsers = query.list();
 
-		command = "select m from Message m inner join m.receivers where" +
-				" m.sender.login like :sender and size(m.receivers) <> (:size)" +
-				"and exists (select u from User u where u in (:participants))" +
-				"group by m order by m.date ";
+//		command = "select m from Message m inner join m.receivers where" +
+//				" m.sender.login like :sender and size(m.receivers) = (:size)" +
+//				"and exists (select u from User u where u in (:participants))" +
+//				"group by m order by m.date ";
 
-		query = session.createQuery(command).setParameterList("participants", selectedUsers).setParameter("size", selectedUsers.size()-1)
+		command = "select m from Message m where size(m.receivers) = (:size)" +
+				" and m.sender in (select u from User u where u in :participants or u.login like :sender)" +
+				" and (select r from m.receivers r) in (select u from User u where u in :participants or u.login like :sender)";
+
+		query = session.createQuery(command).setParameterList("participants", selectedUsers).setParameter("size", selectedUsers.size())
 		.setParameter("sender", user.getLogin());
 		List<Message> messages = query.list();
 		

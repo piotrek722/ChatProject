@@ -131,8 +131,6 @@ public class ServerTest {
     @Test
     public void logoutUserTest() throws RemoteException {
 
-        //User user5 = new User("User5","password", "Name", "LastName");
-        //User user6 = new User("User6","password", "Name", "LastName");
         server.registerClient("User5", "password", "Name", "LastName");
         server.login(client,"User5","password");
 
@@ -145,7 +143,6 @@ public class ServerTest {
 
 
         assertTrue(server.logout(found.get(0)));
-     //   assertFalse(server.logout(user6));
         for (User user : server.getUsersOnline()) {
             assertNotEquals(found.get(0),user);
         }
@@ -250,8 +247,6 @@ public class ServerTest {
         assertEquals(user11,found.get(0).getSender());
         assertEquals("lalala",found.get(0).getContent());
         assertEquals(receivers,found.get(0).getReceivers());
-    //    assertEquals(date,found.get(0).getDate());
-
 
         transaction.commit();
         session.close();
@@ -260,6 +255,7 @@ public class ServerTest {
 
     @Test
     public void getContactsTest() throws RemoteException {
+
         server.registerClient("User14", "password", "Name", "LastName");
         server.registerClient("User15", "password", "Name", "LastName");
         server.registerClient("User16", "password", "Name", "LastName");
@@ -272,7 +268,6 @@ public class ServerTest {
 
     }
 
-    /* TODO write getMessageTest and getMessage
     @Test
     public void getMessagesTest() throws RemoteException {
         server.registerClient("User17", "password", "Name", "LastName");
@@ -308,26 +303,21 @@ public class ServerTest {
 
         Conversation c = server.getMessages(user17,selectedUsers);      //miedzy 17 a 18 => 1,4
 
-
         for (Message m : c.getMessages()) {
-            System.out.println(m.getContent());
-//            if (!(m.getSender().getLogin() == user17.getLogin() || m.getSender().getLogin() == user18.getLogin())) {
-//                fail("sender");
-//            }
-//            if (!(m.getReceivers().contains(user17) || m.getReceivers().contains(user18))) {
-//                fail("receivers");
-//            }
-//            if (m.getReceivers().size() != 1) {
-//                fail("size");
-//            }
+            if (!(m.getSender().getLogin().equals(user17.getLogin())  || m.getSender().getLogin().equals(user18.getLogin()) )) {
+                fail("sender");
+            }
+            if (!(m.getReceivers().contains(user17) || m.getReceivers().contains(user18))) {
+                fail("receivers");
+            }
+            if (m.getReceivers().size() != 1) {
+                fail("size");
+            }
         }
 
         assertEquals(2,c.getMessages().size());
 
-
-
     }
-    */
 
     @Test
     public void findUserTest() throws RemoteException {

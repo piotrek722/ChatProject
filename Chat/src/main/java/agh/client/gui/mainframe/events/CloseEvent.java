@@ -2,10 +2,10 @@ package agh.client.gui.mainframe.events;
 
 import agh.router.DefaultEvent;
 
-public class LogoutEvent extends DefaultEvent {
+public class CloseEvent extends DefaultEvent {
     private String userLogin;
 
-    public LogoutEvent(String userLogin) {
+    public CloseEvent(String userLogin) {
         this.userLogin = userLogin;
     }
 

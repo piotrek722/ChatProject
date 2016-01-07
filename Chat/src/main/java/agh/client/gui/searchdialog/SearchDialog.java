@@ -5,6 +5,7 @@ import agh.router.DefaultEventDispatcher;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
@@ -29,6 +30,7 @@ public class SearchDialog extends JDialog {
         setContentPane(contentPane);
         setModal(true);
         setSize(SEARCH_WIDTH, SEARCH_HEIGHT);
+        setMinimumSize(new Dimension(SEARCH_WIDTH, SEARCH_HEIGHT));
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         KeyAdapter keyadapter = new KeyAdapter() {
@@ -52,6 +54,14 @@ public class SearchDialog extends JDialog {
         firstNameTextField.addKeyListener(keyadapter);
         lastNameTextField.addKeyListener(keyadapter);
         resultsTable.addKeyListener(keyadapter);
+    }
+
+    private void createUIComponents() {
+        Object[] columnNames = {"Nick", "First Name", "Last Name"};
+        Object[][] data = {};
+
+        model = new DefaultTableModel(data, columnNames);
+        resultsTable = new JTable(model);
     }
 
     private void onSearch() {

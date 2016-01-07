@@ -1,10 +1,7 @@
 package agh.client.gui.mainframe;
 
 import agh.client.gui.conversationframe.ConversationFrame;
-import agh.client.gui.mainframe.events.DeleteContactsEvent;
-import agh.client.gui.mainframe.events.LogoutEvent;
-import agh.client.gui.mainframe.events.ShowAccountSettingsEvent;
-import agh.client.gui.mainframe.events.ShowSearchEvent;
+import agh.client.gui.mainframe.events.*;
 import agh.router.DefaultEventDispatcher;
 
 import javax.swing.*;
@@ -30,7 +27,7 @@ public class MainFrame extends JFrame {
 
     private static final Logger LOGGER = Logger.getLogger("Logger");
     private static final int CLIENT_WIDTH = 200;
-    private static final int CLIENT_HEIGHT = 400;
+    private static final int CLIENT_HEIGHT = 500;
 
     public MainFrame(DefaultEventDispatcher dispatcher) throws RemoteException, UnsupportedLookAndFeelException {
         super("Chat");
@@ -62,9 +59,13 @@ public class MainFrame extends JFrame {
             }
         });
 
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            dispatcher.dispatch(new LogoutEvent());
-        }));
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                onExit();
+                super.windowClosing(e);
+            }
+        });
     }
 
     private void createMenuBar(){
@@ -156,13 +157,11 @@ public class MainFrame extends JFrame {
     }
 
     private void onExit() {
-        onLogOut();
-        //Exit
+        dispatcher.dispatch(new CloseEvent(userLogin));
     }
 
     private void onLogOut() {
-        clearFrame(); //Do Dispatchera?
-        dispatcher.dispatch(new LogoutEvent());
+        dispatcher.dispatch(new LogoutEvent(userLogin));
     }
 
     private void onDeleteContact() {

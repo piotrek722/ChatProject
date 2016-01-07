@@ -16,6 +16,7 @@ public class LogoutHandler implements Handler<LogoutEvent> {
 
     @Override
     public void dispatch(LogoutEvent message) {
+        //unregister from Server
         mainFrame.clearFrame();
         mainFrame.setVisible(false);
         loginDialog.setVisible(true);

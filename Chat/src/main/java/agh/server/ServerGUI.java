@@ -6,9 +6,11 @@ import agh.model.Conversation;
 import agh.model.Message;
 import agh.model.User;
 import agh.persistance.HibernateUtils;
+import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.Restrictions;
 
 import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
@@ -82,8 +84,14 @@ public class ServerGUI extends JFrame {
         private static final long serialVersionUID = 1L;
         private Map<String, ClientInterface> usersOnline;
 
-        protected Server() throws RemoteException {
+        public Server() throws RemoteException {
             usersOnline = new HashMap<>();
+            HibernateUtils.setNewConfiguration("Chat/src/main/resources/hibernate.cfg.xml");
+        }
+
+        public Server(String configurationPath) throws RemoteException {
+            usersOnline = new HashMap<>();
+            HibernateUtils.setNewConfiguration(configurationPath);
         }
 
         @Override
@@ -117,10 +125,11 @@ public class ServerGUI extends JFrame {
             Query query = session.createQuery(command).setParameter("login", user.getLogin());
             List<User> found = query.list();
 
-            if(found.size() == 1) {
+            if(!found.isEmpty()) {
                 session.delete(found.get(0));
                 isSuccessful = true;
             }
+
             transaction.commit();
 
             session.close();
@@ -227,9 +236,9 @@ public class ServerGUI extends JFrame {
                 }
             }
 
-            user.getContactList().addContact(contactToAdd);
+            user.getContactList().getUserList().add(contactToAdd);
 
-            session.merge(user);
+            session.saveOrUpdate(user);
 
             transaction.commit();
             session.close();
@@ -294,12 +303,11 @@ public class ServerGUI extends JFrame {
             Query query = session.createQuery(command).setParameterList("contacts", selectedContacts);
             List<User> selectedUsers = query.list();
 
-            command = "select m from Message m inner join m.receivers where" +
-                    " m.sender.id like :sender and size(m.receivers) <> (:size)" +
-                    "and exists (select u from User u where u in (:participants))" +
-                    "group by m order by m.date ";
+            command = "select m from Message m where size(m.receivers) = (:size)" +
+                    " and m.sender in (select u from User u where u in :participants or u.login like :sender)" +
+                    " and (select r from m.receivers r) in (select u from User u where u in :participants or u.login like :sender)";
 
-            query = session.createQuery(command).setParameterList("participants", selectedUsers).setParameter("size", selectedUsers.size()-1)
+            query = session.createQuery(command).setParameterList("participants", selectedUsers).setParameter("size", selectedUsers.size())
                     .setParameter("sender", user.getLogin());
             List<Message> messages = query.list();
 
@@ -312,11 +320,55 @@ public class ServerGUI extends JFrame {
         }
 
         @Override
-        public List<String> getOnlineUsers() throws RemoteException {
+        public List<String> getUsersOnline() throws RemoteException {
 
-            List<String> list = new ArrayList<>();
-            list.addAll(usersOnline.keySet());
-            return list;
+            List<String> users = new ArrayList<>();
+            users.addAll(usersOnline.keySet());
+
+            return users;
+        }
+
+        @Override
+        public List<User> getAllUsers() throws RemoteException {
+
+            Session session = HibernateUtils.getSession();
+            Transaction transaction = session.beginTransaction();
+
+            Query query = session.createQuery("select u from User u");
+            List<User> users = query.list();
+
+            transaction.commit();
+            session.close();
+
+            return users;
+        }
+
+        @Override
+        public List<User> findUser(String login, String name, String lastName) throws RemoteException {
+
+            Session session = HibernateUtils.getSession();
+            Transaction transaction = session.beginTransaction();
+
+            Criteria criteria = session.createCriteria(User.class);
+
+            if(!login.equals("")){
+                criteria.add(Restrictions.like("login",login));
+            }
+
+            if(!name.equals("")){
+                criteria.add(Restrictions.like("name",name));
+            }
+
+            if(!lastName.equals("")){
+                criteria.add(Restrictions.like("lastName", lastName));
+            }
+
+            List<User> users = criteria.list();
+
+            transaction.commit();
+            session.close();
+
+            return users;
         }
     }
 }

@@ -18,9 +18,9 @@ public class HibernateUtils {
 
     private HibernateUtils() {}
 
-    static{
+    public static void setNewConfiguration(String path){
         Configuration configuration = new Configuration();
-        configuration.configure(new File("Chat/src/main/resources/hibernate.cfg.xml"));
+        configuration.configure(new File(path));
         ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder().applySettings(
                 configuration.getProperties()).build();
         sessionFactory = configuration.buildSessionFactory(serviceRegistry);

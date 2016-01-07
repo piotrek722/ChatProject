@@ -339,7 +339,7 @@ public class ClientGUI extends JFrame {
 
             List<String> list = new ArrayList<>();
             try {
-                list = server.getOnlineUsers();        //showing all users online but where?
+                 list = server.getUsersOnline();        //showing all users online but where?
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

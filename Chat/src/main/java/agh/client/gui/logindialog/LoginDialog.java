@@ -72,7 +72,6 @@ public class LoginDialog extends JDialog {
     public void logginginFailed(String text) {
         serverMsgLabel.setText("Logging in failed: " + text);
         serverMsgLabel.setForeground(Color.RED);
-        clearPasswordField();
     }
 
     public void registeredSuccessfully() {

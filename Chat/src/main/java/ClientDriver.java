@@ -69,7 +69,7 @@ public class ClientDriver {
         eventDispatcher.registerChannel(ChangePasswordEvent.class, new ChangePasswordHandler(server, accountSettings));
 
         //Client events
-        eventDispatcher.registerChannel(ReceiveMessageEvent.class, new ReceiveMessageHandler(mainFrame));
+        eventDispatcher.registerChannel(RetrieveMessageEvent.class, new RetrieveMessageHandler(mainFrame));
 
         login.setVisible(true);
     }

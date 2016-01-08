@@ -131,10 +131,10 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
         }
 
         Message message = new Message(content, date, sender, receivers);
-        usersOnline.get(sender.getLogin()).retreiveMessage(message);
+        usersOnline.get(sender.getLogin()).retrieveMessage(message);
 
         for(User receiver : receivers) {
-            usersOnline.get(receiver.getLogin()).retreiveMessage(message);
+            usersOnline.get(receiver.getLogin()).retrieveMessage(message);
         }
 
         transaction = session.beginTransaction();

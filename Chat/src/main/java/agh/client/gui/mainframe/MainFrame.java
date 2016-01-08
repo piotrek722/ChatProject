@@ -128,6 +128,7 @@ public class MainFrame extends JFrame {
         contactJList = new JList(contacts);
     }
 
+    //Contact
     public void setUserLogin(String userLogin) {
         this.userLogin = userLogin;
     }
@@ -144,7 +145,7 @@ public class MainFrame extends JFrame {
 
     public void clearFrame() {
         contacts.removeAllElements();
-        conversationFrames.removeAll(conversationFrames);
+        conversationFrames.clear();
         userLogin = null;
     }
 
@@ -181,9 +182,11 @@ public class MainFrame extends JFrame {
     }
 
     public void setContacts(List<String> contacts) {
+        this.contacts.removeAllElements();
         for (String contact : contacts) {
-            addContact(contact);
+            this.contacts.addElement(contact);
         }
+        sortJlist();
     }
 
     private void openConversationWindow() {

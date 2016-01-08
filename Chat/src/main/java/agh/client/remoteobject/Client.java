@@ -6,5 +6,5 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 
 public interface Client extends Remote, Serializable {
-    void retreiveMessage(Message message) throws RemoteException;
+    void retrieveMessage(Message message) throws RemoteException;
 }

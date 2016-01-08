@@ -1,7 +1,7 @@
 package agh.client.remoteobject;
 
 import agh.model.db.Message;
-import agh.client.remoteobject.events.ReceiveMessageEvent;
+import agh.client.remoteobject.events.RetrieveMessageEvent;
 import agh.router.DefaultEventDispatcher;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -16,7 +16,7 @@ public class DefaultClient extends UnicastRemoteObject implements Client {
     }
 
     @Override
-    public void retreiveMessage(Message message) throws RemoteException {
-        dispatcher.dispatch(new ReceiveMessageEvent());
+    public void retrieveMessage(Message message) throws RemoteException {
+        dispatcher.dispatch(new RetrieveMessageEvent());
     }
 }

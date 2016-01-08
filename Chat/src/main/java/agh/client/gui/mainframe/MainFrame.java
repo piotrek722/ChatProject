@@ -166,7 +166,7 @@ public class MainFrame extends JFrame {
 
     private void onDeleteContact() {
         List<String> values = contactJList.getSelectedValuesList();
-        dispatcher.dispatch(new DeleteContactsEvent(values));
+        dispatcher.dispatch(new DeleteContactsEvent(userLogin, values));
     }
 
     public void addContact(String contact) {

@@ -2,8 +2,11 @@ package agh.client.gui.searchdialog.handlers;
 
 import agh.client.gui.searchdialog.SearchDialog;
 import agh.client.gui.searchdialog.events.SearchEvent;
+import agh.model.Message;
 import agh.router.Handler;
 import agh.server.Server;
+
+import java.rmi.RemoteException;
 
 public class SearchHandler implements Handler<SearchEvent> {
     private Server server;
@@ -15,7 +18,8 @@ public class SearchHandler implements Handler<SearchEvent> {
     }
 
     @Override
-    public void dispatch(SearchEvent message) {
-        //get results from server and display on searchDialog (call some method in SearchDialog)
+    public void dispatch(SearchEvent message) throws RemoteException {
+        server.findUser(message.getLogin(), message.getFname(), message.getLname());
+        //Display result to JTable;
     }
 }

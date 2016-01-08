@@ -7,6 +7,8 @@ import agh.client.gui.logindialog.events.LoginEvent;
 import agh.router.Handler;
 import agh.server.Server;
 
+import java.rmi.RemoteException;
+
 public class LoginHandler implements Handler<LoginEvent> {
     private Server server;
     private Client client;
@@ -22,9 +24,11 @@ public class LoginHandler implements Handler<LoginEvent> {
     }
 
     @Override
-    public void dispatch(LoginEvent message) {
+    public void dispatch(LoginEvent message) throws RemoteException {
         //on fail display error msg on LoginDialog Label, clear password
         //on success switch to MainFrame, clear LoginDialog
+
+        server.login(client, message.getLogin(), message.getPassword()); //if successful? else if failed?
 
         //need String error msg back from server
         mainFrame.setUserLogin(message.getLogin());

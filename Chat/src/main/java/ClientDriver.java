@@ -41,9 +41,9 @@ public class ClientDriver {
         DefaultClient client = new DefaultClient(eventDispatcher);
 
         //MainFrame events
-        eventDispatcher.registerChannel(CloseEvent.class, new CloseHandler());
+        eventDispatcher.registerChannel(CloseEvent.class, new CloseHandler(server));
         eventDispatcher.registerChannel(DeleteContactsEvent.class, new DeleteContactsHandler(server, mainFrame));
-        eventDispatcher.registerChannel(LogoutEvent.class, new LogoutHandler(mainFrame, login));
+        eventDispatcher.registerChannel(LogoutEvent.class, new LogoutHandler(server, mainFrame, login));
         eventDispatcher.registerChannel(ShowAccountSettingsEvent.class, new ShowAccountSettingsHandler(accountSettings));
         eventDispatcher.registerChannel(ShowSearchEvent.class, new ShowSearchHandler(searchDialog));
 

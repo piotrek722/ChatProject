@@ -12,4 +12,6 @@ public class GetContactsEvent extends DefaultEvent {
     public String getUserLogin() {
         return userLogin;
     }
+
+
 }

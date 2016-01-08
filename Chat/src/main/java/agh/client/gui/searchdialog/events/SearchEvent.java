@@ -3,18 +3,18 @@ package agh.client.gui.searchdialog.events;
 import agh.router.DefaultEvent;
 
 public class SearchEvent extends DefaultEvent {
-    private String nick;
+    private String login;
     private String fname;
     private String lname;
 
-    public SearchEvent(String nick, String fname, String lname) {
-        this.nick = nick;
+    public SearchEvent(String login, String fname, String lname) {
+        this.login = login;
         this.fname = fname;
         this.lname = lname;
     }
 
-    public String getNick() {
-        return nick;
+    public String getLogin() {
+        return login;
     }
 
     public String getFname() {

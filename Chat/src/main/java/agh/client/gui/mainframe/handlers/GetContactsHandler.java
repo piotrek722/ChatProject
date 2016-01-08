@@ -16,7 +16,7 @@ public class GetContactsHandler implements Handler<GetContactsEvent>{
 
     @Override
     public void dispatch(GetContactsEvent message) {
-        //get from server contacts for User
+        //server.getContacts(message.getUserLogin());
         //mainFrame.setContacts();
     }
 }

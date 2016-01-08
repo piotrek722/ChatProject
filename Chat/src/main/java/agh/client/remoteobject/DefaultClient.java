@@ -16,8 +16,7 @@ public class DefaultClient extends UnicastRemoteObject implements Client {
     }
 
     @Override
-    public Message retreiveMessage(Message message) throws RemoteException {
-        //dispatcher.dispatch(new ReceiveMessageEvent());
-        return null;
+    public void retreiveMessage(Message message) throws RemoteException {
+        dispatcher.dispatch(new ReceiveMessageEvent());
     }
 }

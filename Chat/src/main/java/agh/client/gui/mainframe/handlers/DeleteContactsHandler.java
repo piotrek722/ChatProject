@@ -16,7 +16,9 @@ public class DeleteContactsHandler implements Handler<DeleteContactsEvent> {
 
     @Override
     public void dispatch(DeleteContactsEvent message) {
-        //Delete contacts from contanctList of User from DB
+        for (String contact : message.getContacts()) {
+            //server.deleteContact(message.getUserLogin(), contact);
+        }
         mainFrame.deleteContacts(message.getContacts());
     }
 }

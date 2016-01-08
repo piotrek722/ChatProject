@@ -16,7 +16,8 @@ public class AddContactHandler implements Handler<AddContactEvent> {
 
     @Override
     public void dispatch(AddContactEvent message) {
-        //server addcontact
-        //clientgui addcontact
+        /*if(server.addContact(message.getUserLogin(), message.getLoginToAdd())) {
+            mainFrame.addContact(message.getLoginToAdd());
+        }*/
     }
 }

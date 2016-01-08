@@ -13,6 +13,6 @@ public class SendMessageHandler implements Handler<SendMessageEvent> {
 
     @Override
     public void dispatch(SendMessageEvent message) {
-        //call server method
+        //server.sendMessage(message.getContent(), message.getDate(), message.getSender(), message.getReceivers());
     }
 }

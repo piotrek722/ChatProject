@@ -1,5 +1,6 @@
 package agh.client.gui.conversationframe;
 
+import agh.client.gui.conversationframe.events.SendMessageEvent;
 import agh.router.EventDispatcher;
 
 import javax.swing.*;
@@ -56,20 +57,20 @@ public class ConversationFrame extends JFrame{
 
     private void onSendMessage() {
         Date date = new Date();
-        String msg = messageTextField.getText();
+        String content = messageTextField.getText();
 
-        //dispatcher.dispatch(new SendMessageEvent(userLogin, users, msg));
+        dispatcher.dispatch(new SendMessageEvent(content, date, userLogin, users));
 
         messageTextField.setText("");
-        conversationTextArea.append(simpleDateFormat.format(date) + " " + userLogin + ">" + msg + "\n");
+        conversationTextArea.append(simpleDateFormat.format(date) + " " + userLogin + " > " + content + "\n");
     }
 
     public List<String> getUsers() {
         return users;
     }
 
-    public void displayMessage() {
-        //format parameters
+    public void displayMessage(String content, Date date, String sender) {
+        conversationTextArea.append(simpleDateFormat.format(date) + " " + sender + " > " + content + "\n");
     }
 
     public void displayConversation() {

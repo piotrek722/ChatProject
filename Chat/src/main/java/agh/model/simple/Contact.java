@@ -1,0 +1,60 @@
+package agh.model.simple;
+
+/**
+ * Created by Kurtz on 08.01.2016.
+ */
+public class Contact {
+    private String login;
+    private String firstName;
+    private String lastName;
+
+    public Contact(String login, String firstName, String lastName) {
+        this.login = login;
+        this.firstName = firstName;
+        this.lastName = lastName;
+    }
+
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Contact contact = (Contact) o;
+
+        return login.equals(contact.login);
+    }
+
+    @Override
+    public int hashCode() {
+        return login.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return firstName + lastName + "(" + login + ")";
+    }
+}

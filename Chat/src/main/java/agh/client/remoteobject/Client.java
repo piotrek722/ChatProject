@@ -1,6 +1,6 @@
 package agh.client.remoteobject;
 
-import agh.model.Message;
+import agh.model.db.Message;
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;

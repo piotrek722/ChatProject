@@ -17,9 +17,9 @@
     <property name="hbm2ddl.auto">create</property>
 
 
-    <mapping class="agh.model.User"/>
-    <mapping class="agh.model.ContactList"/>
-    <mapping class="agh.model.Message"/>
+    <mapping class="agh.model.db.User"/>
+    <mapping class="agh.model.db.ContactList"/>
+    <mapping class="agh.model.db.Message"/>
 
   </session-factory>
 </hibernate-configuration>

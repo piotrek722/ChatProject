@@ -1,6 +1,6 @@
 package agh.client.remoteobject;
 
-import agh.model.Message;
+import agh.model.db.Message;
 import agh.client.remoteobject.events.ReceiveMessageEvent;
 import agh.router.DefaultEventDispatcher;
 import java.rmi.RemoteException;

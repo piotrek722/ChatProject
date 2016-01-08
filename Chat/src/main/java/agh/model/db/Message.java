@@ -1,4 +1,4 @@
-package agh.model;
+package agh.model.db;
 
 import javax.persistence.*;
 import java.io.Serializable;

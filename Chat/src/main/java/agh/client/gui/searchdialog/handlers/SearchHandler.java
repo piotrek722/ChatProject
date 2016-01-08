@@ -2,7 +2,6 @@ package agh.client.gui.searchdialog.handlers;
 
 import agh.client.gui.searchdialog.SearchDialog;
 import agh.client.gui.searchdialog.events.SearchEvent;
-import agh.model.Message;
 import agh.router.Handler;
 import agh.server.Server;
 

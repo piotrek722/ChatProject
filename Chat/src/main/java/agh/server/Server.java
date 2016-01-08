@@ -1,9 +1,9 @@
 package agh.server;
 
 import agh.client.remoteobject.Client;
-import agh.model.ContactList;
-import agh.model.Conversation;
-import agh.model.User;
+import agh.model.db.ContactList;
+import agh.model.db.Conversation;
+import agh.model.db.User;
 import java.util.Date;
 import java.util.List;
 import java.io.Serializable;

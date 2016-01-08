@@ -1,4 +1,4 @@
-package agh.model;
+package agh.model.db;
 
 import java.io.Serializable;
 import java.util.ArrayList;

@@ -1,10 +1,10 @@
 package agh.server;
 
 import agh.client.remoteobject.Client;
-import agh.model.ContactList;
-import agh.model.Conversation;
-import agh.model.Message;
-import agh.model.User;
+import agh.model.db.ContactList;
+import agh.model.db.Conversation;
+import agh.model.db.Message;
+import agh.model.db.User;
 import agh.persistance.HibernateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;

@@ -10,11 +10,11 @@ import java.util.List;
 public class ClientMessage {
     private String content;
     private Date date;
-    private Contact sender;
-    private List<Contact> receivers;
+    private SimplifiedUser sender;
+    private List<SimplifiedUser> receivers;
     private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd:MM:yyyy HH:mm:ss");
 
-    public ClientMessage(String content, Date date, Contact sender, List<Contact> receivers) {
+    public ClientMessage(String content, Date date, SimplifiedUser sender, List<SimplifiedUser> receivers) {
         this.content = content;
         this.date = date;
         this.sender = sender;
@@ -29,11 +29,11 @@ public class ClientMessage {
         return date;
     }
 
-    public Contact getSender() {
+    public SimplifiedUser getSender() {
         return sender;
     }
 
-    public List<Contact> getReceivers() {
+    public List<SimplifiedUser> getReceivers() {
         return receivers;
     }
 

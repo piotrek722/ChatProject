@@ -4,7 +4,6 @@ import agh.client.gui.mainframe.MainFrame;
 import agh.client.remoteobject.Client;
 import agh.client.gui.logindialog.LoginDialog;
 import agh.client.gui.logindialog.events.LoginEvent;
-import agh.model.simple.Contact;
 import agh.router.Handler;
 import agh.server.Server;
 
@@ -24,7 +23,7 @@ public class LoginHandler implements Handler<LoginEvent> {
 
     @Override
     public void dispatch(LoginEvent message) {
-        /*Contact contact;
+        /*SimplifiedUser contact;
         contact = server.login(client, message.getLogin(), message.getPassword());
 
         if (contact != null) {

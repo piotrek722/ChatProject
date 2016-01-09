@@ -3,12 +3,12 @@ package agh.model.simple;
 /**
  * Created by Kurtz on 08.01.2016.
  */
-public class Contact {
+public class SimplifiedUser {
     private String login;
     private String firstName;
     private String lastName;
 
-    public Contact(String login, String firstName, String lastName) {
+    public SimplifiedUser(String login, String firstName, String lastName) {
         this.login = login;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -43,9 +43,9 @@ public class Contact {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Contact contact = (Contact) o;
+        SimplifiedUser simplifiedUser = (SimplifiedUser) o;
 
-        return login.equals(contact.login);
+        return login.equals(simplifiedUser.login);
     }
 
     @Override

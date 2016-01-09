@@ -127,7 +127,7 @@ public class MainFrame extends JFrame {
         contactJList = new JList(contacts);
     }
 
-    //Contact
+    //SimplifiedUser
     public void setUserLogin(String userLogin) {
         this.userLogin = userLogin;
     }

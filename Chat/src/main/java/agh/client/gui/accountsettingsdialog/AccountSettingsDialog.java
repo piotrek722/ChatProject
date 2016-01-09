@@ -2,7 +2,7 @@ package agh.client.gui.accountsettingsdialog;
 
 import agh.client.gui.accountsettingsdialog.events.ChangePasswordEvent;
 import agh.client.gui.accountsettingsdialog.events.SaveAccountChangesEvent;
-import agh.model.simple.Contact;
+import agh.model.simple.SimplifiedUser;
 import agh.router.EventDispatcher;
 
 import javax.swing.*;
@@ -22,7 +22,7 @@ public class AccountSettingsDialog extends JDialog {
     private JLabel profileLabel;
     private JLabel passwordLabel;
 
-    private Contact user;
+    private SimplifiedUser user;
     private EventDispatcher dispatcher;
 
     private final int ACCOUNT_SETTINGS_WIDTCH = 400;
@@ -67,7 +67,7 @@ public class AccountSettingsDialog extends JDialog {
         profileLabel.setForeground(Color.GREEN);
     }
 
-    public void setUser(Contact user) {
+    public void setUser(SimplifiedUser user) {
         this.user = user;
         setFields();
     }

@@ -4,8 +4,11 @@ import agh.client.gui.mainframe.MainFrame;
 import agh.client.remoteobject.Client;
 import agh.client.gui.logindialog.LoginDialog;
 import agh.client.gui.logindialog.events.LoginEvent;
+import agh.model.simple.SimplifiedUser;
 import agh.router.Handler;
 import agh.server.Server;
+
+import java.rmi.RemoteException;
 
 public class LoginHandler implements Handler<LoginEvent> {
     private Server server;
@@ -23,17 +26,21 @@ public class LoginHandler implements Handler<LoginEvent> {
 
     @Override
     public void dispatch(LoginEvent message) {
-        /*SimplifiedUser contact;
-        contact = server.login(client, message.getLogin(), message.getPassword());
+        SimplifiedUser contact;
+        try {
+            contact = server.login(client, message.getLogin(), message.getPassword());
+            if (contact != null) {
+                loginDialog.clearDialog();
+                loginDialog.setVisible(false);
+                mainFrame.setUser(contact);
+                mainFrame.setVisible(true);
+            } else {
+                loginDialog.logginginFailed();
+                loginDialog.clearPasswordField();
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
 
-        if (contact != null) {
-            loginDialog.clearDialog();
-            loginDialog.setVisible(false);
-            mainFrame.setUserLogin(contact);
-            mainFrame.setVisible(true);
-        } else {
-            loginDialog.logginginFailed();
-            loginDialog.clearPasswordField();
-        }*/
     }
 }

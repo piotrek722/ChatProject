@@ -77,7 +77,7 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public User login(Client client, String login, String password) throws RemoteException {
+    public SimplifiedUser login(Client client, String login, String password) throws RemoteException {
         Session session = HibernateUtils.getSession();
         Transaction transaction = session.beginTransaction();
 
@@ -98,7 +98,7 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
             usersOnline.put(user.getLogin(), client);
         }
 
-        return user;
+        return new SimplifiedUser(user.getLogin(), user.getName(), user.getLastName());
     }
 
     @Override

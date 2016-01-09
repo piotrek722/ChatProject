@@ -2,6 +2,7 @@ package agh.client.gui.mainframe;
 
 import agh.client.gui.conversationframe.ConversationFrame;
 import agh.client.gui.mainframe.events.*;
+import agh.model.simple.SimplifiedUser;
 import agh.router.DefaultEventDispatcher;
 
 import javax.swing.*;
@@ -21,6 +22,8 @@ public class MainFrame extends JFrame {
     private JPopupMenu popupMenu;
 
     private String userLogin;
+    private SimplifiedUser user;
+
     private DefaultEventDispatcher dispatcher;
     private List<ConversationFrame> conversationFrames;
 
@@ -130,6 +133,10 @@ public class MainFrame extends JFrame {
     //SimplifiedUser
     public void setUserLogin(String userLogin) {
         this.userLogin = userLogin;
+    }
+
+    public void setUser(SimplifiedUser user) {
+        this.user = user;
     }
 
     private void sortJlist() {

@@ -15,7 +15,7 @@ import java.rmi.RemoteException;
 public interface Server extends Remote, Serializable {
     Boolean registerClient(String login, String password, String name, String lastName) throws RemoteException;
     Boolean unregisterClient(User user) throws RemoteException;
-    User login(Client client, String login, String password) throws RemoteException;
+    SimplifiedUser login(Client client, String login, String password) throws RemoteException;
     Boolean logout(User user) throws RemoteException;
     Boolean sendMessage(String content, Date date, User sender, List<String> logins) throws RemoteException;
     Boolean addContact(User user, String contact) throws RemoteException;

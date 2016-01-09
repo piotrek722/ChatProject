@@ -1,15 +1,16 @@
 package agh.client.gui.mainframe.events;
 
+import agh.model.simple.SimplifiedUser;
 import agh.router.DefaultEvent;
 
 public class LogoutEvent extends DefaultEvent {
-    private String userLogin;
+    private SimplifiedUser user;
 
-    public LogoutEvent(String userLogin) {
-        this.userLogin = userLogin;
+    public LogoutEvent(SimplifiedUser user) {
+        this.user = user;
     }
 
-    public String getUserLogin() {
-        return userLogin;
+    public SimplifiedUser getUser() {
+        return user;
     }
 }

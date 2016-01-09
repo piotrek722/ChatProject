@@ -102,7 +102,7 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public Boolean logout(User user) throws RemoteException {
+    public Boolean logout(SimplifiedUser user) throws RemoteException {
         if(usersOnline.get(user.getLogin()) != null) {
             usersOnline.remove(user.getLogin());
             return true;

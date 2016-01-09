@@ -6,6 +6,8 @@ import agh.client.gui.mainframe.events.LogoutEvent;
 import agh.router.Handler;
 import agh.server.Server;
 
+import java.rmi.RemoteException;
+
 public class LogoutHandler implements Handler<LogoutEvent> {
     private Server server;
     private MainFrame mainFrame;
@@ -19,7 +21,11 @@ public class LogoutHandler implements Handler<LogoutEvent> {
 
     @Override
     public void dispatch(LogoutEvent message) {
-        //server.logout(message.getUserLogin());
+        try {
+            server.logout(message.getUser());
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
         mainFrame.clearFrame();
         mainFrame.setVisible(false);
         loginDialog.setVisible(true);

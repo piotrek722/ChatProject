@@ -168,7 +168,7 @@ public class MainFrame extends JFrame {
     }
 
     private void onLogOut() {
-        dispatcher.dispatch(new LogoutEvent(userLogin));
+        dispatcher.dispatch(new LogoutEvent(user));
     }
 
     private void onDeleteContact() {

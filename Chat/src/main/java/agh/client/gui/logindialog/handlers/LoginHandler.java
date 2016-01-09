@@ -32,7 +32,7 @@ public class LoginHandler implements Handler<LoginEvent> {
             mainFrame.setUserLogin(contact);
             mainFrame.setVisible(true);
         } else {
-            loginDialog.logginginFailed("Reason");
+            loginDialog.logginginFailed();
             loginDialog.clearPasswordField();
         }*/
     }

@@ -29,6 +29,7 @@ public class RegisterHandler implements Handler<RegisterEvent> {
                 loginDialog.setVisible(true);
             } else {
                 registerDialog.clearPasswordField();
+                registerDialog.registeringFailed();
             }
         } catch (RemoteException e) {
             e.printStackTrace();

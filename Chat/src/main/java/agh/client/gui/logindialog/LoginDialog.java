@@ -60,7 +60,7 @@ public class LoginDialog extends JDialog {
 
     private void onSignIn() {
         String login = loginTextField.getText();
-        String password = passwordTextField.getPassword().toString();
+        String password = String.valueOf(passwordTextField.getPassword());
 
         dispatcher.dispatch(new LoginEvent(login, password));
     }
@@ -69,8 +69,8 @@ public class LoginDialog extends JDialog {
         dispatcher.dispatch(new SwitchLoginToRegisterEvent());
     }
 
-    public void logginginFailed(String text) {
-        serverMsgLabel.setText("Logging in failed: " + text);
+    public void logginginFailed() {
+        serverMsgLabel.setText("Logging in failed");
         serverMsgLabel.setForeground(Color.RED);
     }
 

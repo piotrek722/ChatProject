@@ -54,7 +54,7 @@ public class RegisterDialog extends JDialog {
 
     private void onSignUp() {
         String login = loginTextField.getText();
-        String password = passwordTextField.getPassword().toString();
+        String password = String.valueOf(passwordTextField.getPassword());
         String firstName = firstNameTextField.getText();
         String lastName = lastNameTextField.getText();
 
@@ -65,8 +65,8 @@ public class RegisterDialog extends JDialog {
         dispatcher.dispatch(new SwitchRegisterToLoginEvent());
     }
 
-    public void registeringFailed(String text) {
-        serverMsgLabel.setText("Registering failed: " + text);
+    public void registeringFailed() {
+        serverMsgLabel.setText("Registering failed");
         serverMsgLabel.setForeground(Color.RED);
     }
 

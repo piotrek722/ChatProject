@@ -1,5 +1,6 @@
 package agh.model.simple;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -7,7 +8,8 @@ import java.util.List;
 /**
  * Created by Kurtz on 08.01.2016.
  */
-public class ClientMessage {
+public class ClientMessage implements Serializable {
+    private static final long serialVersionUID = 1L;
     private String content;
     private Date date;
     private SimplifiedUser sender;

@@ -1,9 +1,12 @@
 package agh.model.simple;
 
+import java.io.Serializable;
+
 /**
  * Created by Kurtz on 08.01.2016.
  */
-public class SimplifiedUser {
+public class SimplifiedUser implements Serializable{
+    private static final long serialVersionUID = 1L;
     private String login;
     private String firstName;
     private String lastName;

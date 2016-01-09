@@ -1,6 +1,5 @@
 package agh.client.remoteobject;
 
-import agh.model.db.Message;
 import agh.client.remoteobject.events.RetrieveMessageEvent;
 import agh.model.simple.ClientMessage;
 import agh.router.DefaultEventDispatcher;

@@ -1,6 +1,5 @@
 package agh.client.remoteobject;
 
-import agh.model.db.Message;
 import agh.model.simple.ClientMessage;
 
 import java.io.Serializable;

@@ -20,15 +20,18 @@ public class RegisterHandler implements Handler<RegisterEvent> {
     }
 
     @Override
-    public void dispatch(RegisterEvent message) throws RemoteException {
-        if (server.registerClient(message.getLogin(), message.getPassword(), message.getFname(), message.getLname())) {
-            registerDialog.clearDialog();
-            registerDialog.setVisible(false);
-            loginDialog.registeredSuccessfully();
-            loginDialog.setVisible(true);
-        } else {
-            registerDialog.clearPasswordField();
+    public void dispatch(RegisterEvent message) {
+        try {
+            if (server.registerClient(message.getLogin(), message.getPassword(), message.getFname(), message.getLname())) {
+                registerDialog.clearDialog();
+                registerDialog.setVisible(false);
+                loginDialog.registeredSuccessfully();
+                loginDialog.setVisible(true);
+            } else {
+                registerDialog.clearPasswordField();
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
         }
-
     }
 }

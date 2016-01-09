@@ -8,7 +8,6 @@ import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.*;
 import java.awt.event.*;
-import java.rmi.RemoteException;
 import java.util.*;
 import java.util.List;
 import java.util.logging.Level;
@@ -29,7 +28,7 @@ public class MainFrame extends JFrame {
     private static final int CLIENT_WIDTH = 200;
     private static final int CLIENT_HEIGHT = 500;
 
-    public MainFrame(DefaultEventDispatcher dispatcher) throws RemoteException, UnsupportedLookAndFeelException {
+    public MainFrame(DefaultEventDispatcher dispatcher) throws UnsupportedLookAndFeelException {
         super("Chat");
         this.dispatcher = dispatcher;
         this.conversationFrames = new ArrayList<>();
@@ -154,7 +153,7 @@ public class MainFrame extends JFrame {
     }
 
     private void onAccountSettings() {
-        dispatcher.dispatch(new ShowAccountSettingsEvent(userLogin));
+        //dispatcher.dispatch(new ShowAccountSettingsEvent(userLogin));
     }
 
     private void onExit() {

@@ -1,15 +1,16 @@
 package agh.client.gui.mainframe.events;
 
+import agh.model.simple.Contact;
 import agh.router.DefaultEvent;
 
 public class ShowAccountSettingsEvent extends DefaultEvent {
-    private String userLogin;
+    private Contact user;
 
-    public ShowAccountSettingsEvent(String userLogin) {
-        this.userLogin = userLogin;
+    public ShowAccountSettingsEvent(Contact user) {
+        this.user = user;
     }
 
-    public String getUserLogin() {
-        return userLogin;
+    public Contact getUser() {
+        return user;
     }
 }

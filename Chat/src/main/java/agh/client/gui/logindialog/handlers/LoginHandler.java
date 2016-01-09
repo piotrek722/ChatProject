@@ -8,8 +8,6 @@ import agh.model.simple.Contact;
 import agh.router.Handler;
 import agh.server.Server;
 
-import java.rmi.RemoteException;
-
 public class LoginHandler implements Handler<LoginEvent> {
     private Server server;
     private Client client;
@@ -25,7 +23,7 @@ public class LoginHandler implements Handler<LoginEvent> {
     }
 
     @Override
-    public void dispatch(LoginEvent message) throws RemoteException {
+    public void dispatch(LoginEvent message) {
         /*Contact contact;
         contact = server.login(client, message.getLogin(), message.getPassword());
 

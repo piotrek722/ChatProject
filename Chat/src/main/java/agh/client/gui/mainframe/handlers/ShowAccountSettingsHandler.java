@@ -13,7 +13,7 @@ public class ShowAccountSettingsHandler implements Handler<ShowAccountSettingsEv
 
     @Override
     public void dispatch(ShowAccountSettingsEvent message) {
-        accountSettingsDialog.setLogin(message.getUserLogin());
+        accountSettingsDialog.setUser(message.getUser());
         accountSettingsDialog.setVisible(true);
     }
 }

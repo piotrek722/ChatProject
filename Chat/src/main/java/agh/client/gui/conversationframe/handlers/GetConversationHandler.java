@@ -5,8 +5,6 @@ import agh.client.gui.mainframe.events.GetContactsEvent;
 import agh.router.Handler;
 import agh.server.Server;
 
-import java.rmi.RemoteException;
-
 public class GetConversationHandler implements Handler<GetConversationEvent>{
     private Server server;
 
@@ -15,7 +13,7 @@ public class GetConversationHandler implements Handler<GetConversationEvent>{
     }
 
     @Override
-    public void dispatch(GetConversationEvent message) throws RemoteException {
+    public void dispatch(GetConversationEvent message) {
         //server.getMessages(message.getSender(), message.getReceivers());
         //converseWindow.displayConversation(List<Msg>)
     }

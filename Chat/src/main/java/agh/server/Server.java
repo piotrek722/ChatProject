@@ -4,6 +4,8 @@ import agh.client.remoteobject.Client;
 import agh.model.db.ContactList;
 import agh.model.db.Conversation;
 import agh.model.db.User;
+import agh.model.simple.SimplifiedUser;
+
 import java.util.Date;
 import java.util.List;
 import java.io.Serializable;
@@ -19,8 +21,9 @@ public interface Server extends Remote, Serializable {
     Boolean addContact(User user, String contact) throws RemoteException;
     Boolean deleteContact(User user, String contact) throws RemoteException;
     ContactList getContacts(User user) throws RemoteException;
+    List<SimplifiedUser> getUserContacts(User user) throws RemoteException;
     Conversation getMessages(User user, List<String> selectedContacts) throws RemoteException;
     List<String> getUsersOnline() throws  RemoteException;
-    List<User> getAllUsers() throws RemoteException;
-    List<User> findUser(String login, String name, String lastName) throws RemoteException;
+    List<SimplifiedUser> getAllUsers() throws RemoteException;
+    List<SimplifiedUser> findUser(String login, String name, String lastName) throws RemoteException;
 }

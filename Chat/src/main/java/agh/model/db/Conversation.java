@@ -1,5 +1,7 @@
 package agh.model.db;
 
+import agh.model.simple.ClientMessage;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,16 +13,16 @@ import java.util.List;
 public class Conversation  implements Serializable {
     
     private static final long serialVersionUID = 1L;
-    private List<Message> messages = new ArrayList<>();
+    private List<ClientMessage> messages = new ArrayList<>();
 
     public Conversation() {
     }
 
-    public List<Message> getMessages() {
+    public List<ClientMessage> getMessages() {
         return messages;
     }
 
-    public void setMessages(List<Message> messages) {
+    public void setMessages(List<ClientMessage> messages) {
         this.messages = messages;
     }
 }

@@ -5,6 +5,8 @@ import agh.model.db.ContactList;
 import agh.model.db.Conversation;
 import agh.model.db.Message;
 import agh.model.db.User;
+import agh.model.simple.ClientMessage;
+import agh.model.simple.SimplifiedUser;
 import agh.persistance.HibernateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -131,10 +133,19 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
         }
 
         Message message = new Message(content, date, sender, receivers);
-        usersOnline.get(sender.getLogin()).retrieveMessage(message);
+
+        SimplifiedUser csender = new SimplifiedUser(sender.getLogin(),sender.getName(),sender.getLastName());
+
+        List<SimplifiedUser> creceivers = new ArrayList<>();
+        for (User u: receivers) {
+            creceivers.add(new SimplifiedUser(u.getLogin(),u.getName(),u.getLastName()));
+        }
+
+        ClientMessage clientmessage = new ClientMessage(content,date,csender,creceivers);
+        usersOnline.get(sender.getLogin()).retrieveMessage(clientmessage);
 
         for(User receiver : receivers) {
-            usersOnline.get(receiver.getLogin()).retrieveMessage(message);
+            usersOnline.get(receiver.getLogin()).retrieveMessage(clientmessage);
         }
 
         transaction = session.beginTransaction();
@@ -214,6 +225,30 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
     }
 
     @Override
+    public List<SimplifiedUser> getUserContacts(User user) throws RemoteException {
+        Session session = HibernateUtils.getSession();
+        Transaction transaction = session.beginTransaction();
+
+        ContactList contactList = null;
+        List<SimplifiedUser> contacts = new ArrayList<>();
+
+        String command = "select cl from User u inner join u.contactList cl where u.login like :login";
+        Query query = session.createQuery(command).setParameter("login", user.getLogin());
+        if(!query.list().isEmpty()) {
+            contactList = (ContactList) query.list().get(0);
+
+            for (User u : contactList.getUserList()) {
+                contacts.add(new SimplifiedUser(u.getLogin(),u.getName(),u.getLastName()));
+            }
+        }
+
+        transaction.commit();
+        session.close();
+
+        return contacts;
+    }
+
+    @Override
     public ContactList getContacts(User user) throws RemoteException {
         Session session = HibernateUtils.getSession();
         Transaction transaction = session.beginTransaction();
@@ -228,6 +263,7 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
 
         transaction.commit();
         session.close();
+
         return contactList;
     }
 
@@ -251,8 +287,19 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
         transaction.commit();
         session.close();
 
+        List<ClientMessage> clientmessages = new ArrayList<>();
+        List<SimplifiedUser> creceivers = new ArrayList<>();
+
+        for (Message m: messages) {
+            SimplifiedUser c = new SimplifiedUser(m.getSender().getLogin(),m.getSender().getName(),m.getSender().getLastName());
+            for (User u : m.getReceivers()) {
+                creceivers.add(new SimplifiedUser(u.getLogin(),u.getName(),u.getLastName()));
+            }
+            clientmessages.add(new ClientMessage(m.getContent(),m.getDate(),c,creceivers));
+        }
+
         Conversation conversation = new Conversation();
-        conversation.setMessages(messages);
+        conversation.setMessages(clientmessages);
         return conversation;
     }
 
@@ -266,7 +313,7 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<User> getAllUsers() throws RemoteException {
+    public List<SimplifiedUser> getAllUsers() throws RemoteException {
 
         Session session = HibernateUtils.getSession();
         Transaction transaction = session.beginTransaction();
@@ -277,11 +324,16 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
         transaction.commit();
         session.close();
 
-        return users;
+        List<SimplifiedUser> contacts = new ArrayList<>();
+        for (User u : users) {
+            contacts.add(new SimplifiedUser(u.getLogin(),u.getName(),u.getLastName()));
+        }
+
+        return contacts;
     }
 
     @Override
-    public List<User> findUser(String login, String name, String lastName) throws RemoteException {
+    public List<SimplifiedUser> findUser(String login, String name, String lastName) throws RemoteException {
 
         Session session = HibernateUtils.getSession();
         Transaction transaction = session.beginTransaction();
@@ -302,9 +354,15 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
 
         List<User> users = criteria.list();
 
+        List<SimplifiedUser> contacts = new ArrayList<>();
+
+        for (User u: users) {
+            contacts.add(new SimplifiedUser(u.getLogin(),u.getName(),u.getLastName()));
+        }
+
         transaction.commit();
         session.close();
 
-        return users;
+        return contacts;
     }
 }

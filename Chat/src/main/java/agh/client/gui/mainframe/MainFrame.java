@@ -137,13 +137,7 @@ public class MainFrame extends JFrame {
     }
 
     private void sortJlist() {
-        Object[] elems = contacts.toArray();
-        contacts.removeAllElements();
-
-        Arrays.sort(elems);
-        for (Object elem : elems) {
-            contacts.addElement((SimplifiedUser) elem);
-        }
+        Collections.sort(Collections.list(contacts.elements()));
     }
 
     private void onAccountSettings() {

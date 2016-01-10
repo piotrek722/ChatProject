@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * Created by Kurtz on 08.01.2016.
  */
-public class SimplifiedUser implements Serializable{
+public class SimplifiedUser implements Serializable, Comparable{
     private static final long serialVersionUID = 1L;
     private String login;
     private String firstName;
@@ -59,5 +59,10 @@ public class SimplifiedUser implements Serializable{
     @Override
     public String toString() {
         return firstName + " " + lastName + " (" + login + ")";
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        return ((SimplifiedUser) this).getLogin().compareTo(((SimplifiedUser) o).getLogin());
     }
 }

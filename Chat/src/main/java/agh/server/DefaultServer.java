@@ -122,7 +122,14 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
 
         String commandUser = "select u from User u where u.login like :login";
         Query queryUser = session.createQuery(commandUser).setParameter("login", clientmessage.getSender().getLogin());
-        User sender = (User) queryUser.list().get(0);
+        List<User> found = queryUser.list();
+
+        if (found.isEmpty()) {
+            session.close();
+            return false;
+        }
+
+        User sender = found.get(0);
 
         String command = "select u from User u where u.login in (:logins)";
         List<String> logins = clientmessage.getReceivers().stream().map(e -> e.getLogin()).collect(Collectors.toList());
@@ -130,13 +137,6 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
         List<User> receivers = query.list();
 
         transaction.commit();
-
-        /*for(User receiver : receivers) {
-            if(usersOnline.get(receiver.getLogin()) == null) {
-                session.close();
-                return false;
-            }
-        }*/
 
         Message message = new Message(clientmessage.getContent(), clientmessage.getDate(), sender, receivers);
 
@@ -147,7 +147,6 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
             simplifiedReceivers.add(new SimplifiedUser(u.getLogin(),u.getName(),u.getLastName()));
         }
 
-        //ClientMessage clientmessage = new ClientMessage(content, date, csender, simplifiedReceivers);
         usersOnline.get(csender.getLogin()).retrieveMessage(clientmessage);
 
         for(User receiver : receivers) {
@@ -173,7 +172,14 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
 
         String commandUser = "select u from User u where u.login like :login";
         Query queryUser = session.createQuery(commandUser).setParameter("login", login);
-        User user = (User) queryUser.list().get(0);
+        List<User> found = queryUser.list();
+
+        if (found.isEmpty()) {
+            session.close();
+            return false;
+        }
+
+        User user = found.get(0);
 
         User contactToAdd = null;
         String command = "select u from User u where u.login like :contact";
@@ -212,7 +218,14 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
 
         String commandUser = "select u from User u where u.login like :login";
         Query queryUser = session.createQuery(commandUser).setParameter("login", login);
-        User user = (User) queryUser.list().get(0);
+        List<User> found = queryUser.list();
+
+        if (found.isEmpty()) {
+            session.close();
+            return  false;
+        }
+
+        User user = found.get(0);
 
         ContactList contactList = this.getContacts(login);
         List<User> userList = contactList.getUserList();
@@ -237,6 +250,7 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
 
         transaction.commit();
         session.close();
+
         return true;
     }
 
@@ -384,27 +398,32 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
 
     @Override
     public SimplifiedUser saveAccountChanges(String login, String name, String lastName) throws RemoteException {
+        SimplifiedUser simplifiedUser = null;
         Session session = HibernateUtils.getSession();
         Transaction transaction = session.beginTransaction();
 
         String command = "select u from User u where u.login like :login";
         Query query = session.createQuery(command).setParameter("login", login);
-        User user = (User) query.list().get(0);
+        List<User> found = query.list();
 
-        if (name != "") {
-            user.setName(name);
+        if (!found.isEmpty()) {
+            User user = found.get(0);
+            simplifiedUser = new SimplifiedUser(login, name, lastName);
+
+            if (name != "") {
+                user.setName(name);
+            }
+
+            if (lastName != "") {
+                user.setLastName(lastName);
+            }
+            session.saveOrUpdate(user);
         }
-
-        if (lastName != "") {
-            user.setLastName(lastName);
-        }
-
-        session.saveOrUpdate(user);
 
         transaction.commit();
         session.close();
 
-        return new SimplifiedUser(login, name, lastName);
+        return simplifiedUser;
     }
 
     @Override

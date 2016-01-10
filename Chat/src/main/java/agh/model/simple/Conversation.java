@@ -1,7 +1,5 @@
 package agh.model.simple;
 
-import agh.model.simple.ClientMessage;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

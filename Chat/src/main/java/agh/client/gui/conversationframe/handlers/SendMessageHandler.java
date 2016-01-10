@@ -18,7 +18,7 @@ public class SendMessageHandler implements Handler<SendMessageEvent> {
         try {
             server.sendMessage(message.getClientMessage());
         } catch (RemoteException e) {
-            //
+            e.printStackTrace();
         }
     }
 }

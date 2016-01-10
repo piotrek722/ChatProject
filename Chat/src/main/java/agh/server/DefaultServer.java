@@ -16,6 +16,7 @@ import org.hibernate.criterion.Restrictions;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class DefaultServer extends UnicastRemoteObject implements Server {
     private static final long serialVersionUID = 1L;
@@ -112,7 +113,7 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
 
     @Override
     public Boolean sendMessage(ClientMessage clientmessage) throws RemoteException {
-        if(usersOnline.get(clientmessage.getSender()) == null) {
+        if(usersOnline.get(clientmessage.getSender().getLogin()) == null) {
             return false;
         }
 
@@ -120,21 +121,22 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
         Transaction transaction = session.beginTransaction();
 
         String commandUser = "select u from User u where u.login like :login";
-        Query queryUser = session.createQuery(commandUser).setParameter("login", clientmessage.getSender());
+        Query queryUser = session.createQuery(commandUser).setParameter("login", clientmessage.getSender().getLogin());
         User sender = (User) queryUser.list().get(0);
 
         String command = "select u from User u where u.login in (:logins)";
-        Query query = session.createQuery(command).setParameterList("logins", clientmessage.getReceivers());
+        List<String> logins = clientmessage.getReceivers().stream().map(e -> e.getLogin()).collect(Collectors.toList());
+        Query query = session.createQuery(command).setParameterList("logins", logins);
         List<User> receivers = query.list();
 
         transaction.commit();
 
-        for(User receiver : receivers) {
+        /*for(User receiver : receivers) {
             if(usersOnline.get(receiver.getLogin()) == null) {
                 session.close();
                 return false;
             }
-        }
+        }*/
 
         Message message = new Message(clientmessage.getContent(), clientmessage.getDate(), sender, receivers);
 
@@ -149,7 +151,9 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
         usersOnline.get(csender.getLogin()).retrieveMessage(clientmessage);
 
         for(User receiver : receivers) {
-            usersOnline.get(receiver.getLogin()).retrieveMessage(clientmessage);
+            if (usersOnline.get(receiver.getLogin()) != null) {
+                usersOnline.get(receiver.getLogin()).retrieveMessage(clientmessage);
+            }
         }
 
         transaction = session.beginTransaction();

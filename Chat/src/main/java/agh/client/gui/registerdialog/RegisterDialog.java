@@ -9,6 +9,8 @@ import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class RegisterDialog extends JDialog {
     private JPanel contentPane;
@@ -22,8 +24,8 @@ public class RegisterDialog extends JDialog {
 
     private DefaultEventDispatcher dispatcher;
 
-    private static final int REGISTER_WIDTH = 400;
-    private static final int REGISTER_HEIGHT = 400;
+    private static final int REGISTER_WIDTH = 350;
+    private static final int REGISTER_HEIGHT = 300;
 
     public RegisterDialog(DefaultEventDispatcher dispatcher) throws UnsupportedLookAndFeelException {
         this.dispatcher = dispatcher;
@@ -32,13 +34,13 @@ public class RegisterDialog extends JDialog {
         setModal(true);
         setSize(REGISTER_WIDTH, REGISTER_HEIGHT);
         setResizable(false);
-        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         KeyAdapter keyadapter = new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
                 if (e.getKeyChar() == KeyEvent.VK_ENTER) {
-                    onSignIn();
+                    onSignUp();
                 }
             }
         };
@@ -50,6 +52,13 @@ public class RegisterDialog extends JDialog {
         passwordTextField.addKeyListener(keyadapter);
         firstNameTextField.addKeyListener(keyadapter);
         lastNameTextField.addKeyListener(keyadapter);
+
+        this.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                super.windowClosing(e);
+            }
+        });
     }
 
     private void onSignUp() {

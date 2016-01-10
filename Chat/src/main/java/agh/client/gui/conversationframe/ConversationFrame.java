@@ -11,7 +11,6 @@ import javax.swing.*;
 import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -68,7 +67,7 @@ public class ConversationFrame extends JFrame{
         dispatcher.dispatch(new SendMessageEvent(message));
 
         messageTextField.setText("");
-        conversationTextArea.append(message.toString() + "\n");
+        //conversationTextArea.append(message.toString() + "\n");
     }
 
     public List<SimplifiedUser> getParticipants() {

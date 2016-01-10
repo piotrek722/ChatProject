@@ -44,13 +44,6 @@ public class MainFrame extends JFrame {
         createMenuBar();
         createPopupMenu();
 
-        /*contacts.addElement("Adrian Puchacki");
-        contacts.addElement("Jan Paweł");
-        contacts.addElement("Jan Paweł 2");
-        contacts.addElement("Kuba Nowicki");
-        contacts.addElement("Waldemar Walasik");
-        contacts.addElement("Wojciech Puczyk");*/
-
         contactJList.addKeyListener(new KeyAdapter() {
             @Override
             public void keyTyped(KeyEvent e) {
@@ -158,11 +151,11 @@ public class MainFrame extends JFrame {
     }
 
     private void onSearch() {
-        dispatcher.dispatch(new ShowSearchEvent());
+        dispatcher.dispatch(new ShowSearchEvent(user));
     }
 
     private void onDeleteContact() {
-        List<String> values = contactJList.getSelectedValuesList();
+        List<SimplifiedUser> values = contactJList.getSelectedValuesList();
         dispatcher.dispatch(new DeleteContactsEvent(user.getLogin(), values));
     }
 
@@ -186,7 +179,21 @@ public class MainFrame extends JFrame {
     }
 
     public void displayMessage(ClientMessage message) {
-        conversationFrames.get(message.getReceivers().hashCode()).displayMessage(message);
+        List<SimplifiedUser> receivers = message.getReceivers();
+        receivers.add(message.getSender());
+        receivers.remove(user);
+
+        ConversationFrame frame = conversationFrames.get(receivers.hashCode());
+        if (frame == null) {
+            try {
+                frame = new ConversationFrame(user, receivers, dispatcher);
+                conversationFrames.put(receivers.hashCode(), frame);
+            } catch (UnsupportedLookAndFeelException e) {
+                e.printStackTrace();
+            }
+        }
+        frame.setVisible(true);
+        frame.displayMessage(message);
     }
 
     private void openConversationWindow() {
@@ -196,22 +203,18 @@ public class MainFrame extends JFrame {
             selectedContacts.add(contacts.elementAt(index));
         }
 
-        for (ConversationFrame window : conversationFrames.values()) {
-            List<SimplifiedUser> windowContactList = window.getParticipants();
-            if (Arrays.equals(windowContactList.toArray(), selectedContacts.toArray())) {
-                if (!window.isVisible()) {
-                    window.setVisible(true);
-                }
-                window.toFront();
-                return;
+        ConversationFrame frame = conversationFrames.get(selectedContacts.hashCode());
+        if (frame != null) {
+            if (!frame.isVisible()) {
+                frame.setVisible(true);
             }
-        }
-
-        try {
-            //conversationFrames.add(new ConversationFrame(user, selectedContacts, dispatcher));
-            conversationFrames.put(selectedContacts.hashCode(), new ConversationFrame(user, selectedContacts, dispatcher));
-        } catch (UnsupportedLookAndFeelException e) {
-            LOGGER.log(Level.SEVERE, e.toString());
+            frame.toFront();
+        } else {
+            try {
+                conversationFrames.put(selectedContacts.hashCode(), new ConversationFrame(user, selectedContacts, dispatcher));
+            } catch (UnsupportedLookAndFeelException e) {
+                LOGGER.log(Level.SEVERE, e.toString());
+            }
         }
     }
 

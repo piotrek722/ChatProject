@@ -19,8 +19,8 @@ public class SearchDialog extends JDialog {
     private JTextField firstNameTextField;
     private JButton searchButton;
     private JButton addButton;
-    private JTable resultsTable;
-    private DefaultTableModel model;
+    private JList resultList;
+    private DefaultListModel<SimplifiedUser> model;
 
     private SimplifiedUser user;
     private DefaultEventDispatcher dispatcher;
@@ -30,7 +30,6 @@ public class SearchDialog extends JDialog {
 
     public SearchDialog(DefaultEventDispatcher dispatcher) {
         this.dispatcher = dispatcher;
-        this.model = new DefaultTableModel();
         setContentPane(contentPane);
         setModal(true);
         setSize(SEARCH_WIDTH, SEARCH_HEIGHT);
@@ -44,7 +43,7 @@ public class SearchDialog extends JDialog {
                     Object source = e.getSource();
                     if (source == nickTextField || source == firstNameTextField || source == lastNameTextField) {
                         onSearch();
-                    } else if(source == resultsTable) {
+                    } else if(source == resultList) {
                         onAdd();
                     }
                 }
@@ -57,15 +56,13 @@ public class SearchDialog extends JDialog {
         nickTextField.addKeyListener(keyadapter);
         firstNameTextField.addKeyListener(keyadapter);
         lastNameTextField.addKeyListener(keyadapter);
-        resultsTable.addKeyListener(keyadapter);
+        resultList.addKeyListener(keyadapter);
     }
 
     private void createUIComponents() {
-        Object[] columnNames = {"Nick", "First Name", "Last Name"};
-        Object[][] data = {};
-
-        model = new DefaultTableModel(data, columnNames);
-        resultsTable = new JTable(model);
+        this.model = new DefaultListModel();
+        resultList = new JList(model);
+        resultList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     }
 
     private void onSearch() {
@@ -77,18 +74,17 @@ public class SearchDialog extends JDialog {
     }
 
     private void onAdd() {
-        int selectedRow = resultsTable.getSelectedRow();
-        String loginToAdd = (String) resultsTable.getValueAt(selectedRow, 0);
-        String fname = (String) resultsTable.getValueAt(selectedRow, 1);
-        String lname = (String) resultsTable.getValueAt(selectedRow, 2);
-        dispatcher.dispatch(new AddContactEvent(user.getLogin(), new SimplifiedUser(loginToAdd, fname, lname)));
+        int selectedIndex = resultList.getSelectedIndex();
+
+        if (selectedIndex >= 0) {
+            dispatcher.dispatch(new AddContactEvent(user.getLogin(), model.elementAt(selectedIndex)));
+        }
     }
 
     public void displayResultsOfSearch(List<SimplifiedUser> users) {
         clearJTable();
-        for (SimplifiedUser user : users) {
-            Object[] row = {user.getLogin(), user.getFirstName(), user.getLastName()};
-            model.addRow(row);
+        for (SimplifiedUser user: users) {
+            model.addElement(user);
         }
     }
 
@@ -97,9 +93,7 @@ public class SearchDialog extends JDialog {
     }
 
     public void clearJTable() {
-        for (int i = 0; i < model.getRowCount(); i++) {
-            model.removeRow(i);
-        }
+        model.removeAllElements();
     }
 
     public void clearDialog() {

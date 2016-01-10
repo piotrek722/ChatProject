@@ -58,6 +58,6 @@ public class SimplifiedUser implements Serializable{
 
     @Override
     public String toString() {
-        return firstName + lastName + "(" + login + ")";
+        return firstName + " " + lastName + " (" + login + ")";
     }
 }

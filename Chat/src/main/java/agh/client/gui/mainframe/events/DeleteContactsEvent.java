@@ -1,14 +1,15 @@
 package agh.client.gui.mainframe.events;
 
+import agh.model.simple.SimplifiedUser;
 import agh.router.DefaultEvent;
 
 import java.util.List;
 
 public class DeleteContactsEvent extends DefaultEvent {
     private String userLogin;
-    private List<String> contacts; //Or sth
+    private List<SimplifiedUser> contacts;
 
-    public DeleteContactsEvent(String userLogin, List<String> contacts) {
+    public DeleteContactsEvent(String userLogin, List<SimplifiedUser> contacts) {
         this.userLogin = userLogin;
         this.contacts = contacts;
     }
@@ -17,7 +18,7 @@ public class DeleteContactsEvent extends DefaultEvent {
         return userLogin;
     }
 
-    public List<String> getContacts() {
+    public List<SimplifiedUser> getContacts() {
         return contacts;
     }
 }

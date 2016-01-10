@@ -9,6 +9,7 @@ import agh.router.Handler;
 import agh.server.Server;
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 public class LoginHandler implements Handler<LoginEvent> {
     private Server server;
@@ -32,6 +33,7 @@ public class LoginHandler implements Handler<LoginEvent> {
             if (contact != null) {
                 loginDialog.clearDialog();
                 loginDialog.setVisible(false);
+                mainFrame.setContacts(server.getUserContacts(message.getLogin()));
                 mainFrame.setUser(contact);
                 mainFrame.setVisible(true);
             } else {

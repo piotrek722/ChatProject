@@ -1,7 +1,6 @@
 package agh.client.gui.conversationframe.handlers;
 
 import agh.client.gui.conversationframe.events.GetConversationEvent;
-import agh.client.gui.mainframe.events.GetContactsEvent;
 import agh.model.simple.Conversation;
 import agh.router.Handler;
 import agh.server.Server;

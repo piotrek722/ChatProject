@@ -100,12 +100,9 @@
             <properties/>
             <border type="none"/>
             <children>
-              <component id="e9692" class="javax.swing.JTable" binding="resultsTable" custom-create="true">
+              <component id="f1b83" class="javax.swing.JList" binding="resultList" custom-create="true">
                 <constraints/>
                 <properties/>
-                <clientProperties>
-                  <JTable.autoStartsEdit class="java.lang.Boolean" value="false"/>
-                </clientProperties>
               </component>
             </children>
           </scrollpane>

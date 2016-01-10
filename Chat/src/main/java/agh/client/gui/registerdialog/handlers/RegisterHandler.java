@@ -32,7 +32,7 @@ public class RegisterHandler implements Handler<RegisterEvent> {
                 registerDialog.registeringFailed();
             }
         } catch (RemoteException e) {
-            e.printStackTrace();
+            registerDialog.registeringFailed(e.toString());
         }
     }
 }

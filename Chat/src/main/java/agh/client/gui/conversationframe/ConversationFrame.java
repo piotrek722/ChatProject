@@ -1,6 +1,10 @@
 package agh.client.gui.conversationframe;
 
+import agh.client.gui.conversationframe.events.GetConversationEvent;
 import agh.client.gui.conversationframe.events.SendMessageEvent;
+import agh.model.simple.ClientMessage;
+import agh.model.simple.Conversation;
+import agh.model.simple.SimplifiedUser;
 import agh.router.EventDispatcher;
 
 import javax.swing.*;
@@ -10,6 +14,7 @@ import java.awt.event.KeyEvent;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ConversationFrame extends JFrame{
     private JTextArea conversationTextArea;
@@ -17,18 +22,17 @@ public class ConversationFrame extends JFrame{
     private JTextField messageTextField;
     private JButton sendButton;
 
-    private String userLogin;
-    private List<String> users;
+    private SimplifiedUser user;
+    private List<SimplifiedUser> participants;
     private EventDispatcher dispatcher;
-    private static final SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
 
     private static final int CONVERSATION_FRAME_WIDTH = 400;
     private static final int CONVERSATION_FRAME_HEIGHT = 300;
 
-    public ConversationFrame(String userLogin, List<String> users, EventDispatcher dispatcher) throws UnsupportedLookAndFeelException {
-        super(String.join(", ", users));
-        this.userLogin = userLogin;
-        this.users = users;
+    public ConversationFrame(SimplifiedUser user, List<SimplifiedUser> participants, EventDispatcher dispatcher) throws UnsupportedLookAndFeelException {
+        super(String.join(", ", participants.stream().map(e -> e.getLogin()).collect(Collectors.toList())));
+        this.user = user;
+        this.participants = participants;
         this.dispatcher = dispatcher;
 
         setContentPane(mainPanel);
@@ -51,29 +55,33 @@ public class ConversationFrame extends JFrame{
     }
 
     private void getConversation() {
-        //dispatcher.dispatch();
-        //conversationTextArea.append()
+        List<String> list = participants.stream().map(e -> e.getLogin()).collect(Collectors.toList());
+        dispatcher.dispatch(new GetConversationEvent(user.getLogin(), list, this));
     }
 
     private void onSendMessage() {
         Date date = new Date();
         String content = messageTextField.getText();
 
-        dispatcher.dispatch(new SendMessageEvent(content, date, userLogin, users));
+        ClientMessage message = new ClientMessage(content, date, user, participants);
+
+        dispatcher.dispatch(new SendMessageEvent(message));
 
         messageTextField.setText("");
-        conversationTextArea.append(simpleDateFormat.format(date) + " " + userLogin + " > " + content + "\n");
+        conversationTextArea.append(message.toString() + "\n");
     }
 
-    public List<String> getUsers() {
-        return users;
+    public List<SimplifiedUser> getParticipants() {
+        return participants;
     }
 
-    public void displayMessage(String content, Date date, String sender) {
-        conversationTextArea.append(simpleDateFormat.format(date) + " " + sender + " > " + content + "\n");
+    public void displayMessage(ClientMessage message) {
+        conversationTextArea.append(message.toString() + "\n");
     }
 
-    public void displayConversation() {
-        //for each message
+    public void displayConversation(Conversation conversation) {
+        for (ClientMessage message : conversation.getMessages()) {
+            displayMessage(message);
+        }
     }
 }

@@ -1,21 +1,22 @@
 package agh.client.gui.searchdialog.events;
 
+import agh.model.simple.SimplifiedUser;
 import agh.router.DefaultEvent;
 
 public class AddContactEvent extends DefaultEvent {
     private String userLogin;
-    private String loginToAdd;
+    private SimplifiedUser userToAdd;
 
-    public AddContactEvent(String userLogin, String loginToAdd) {
+    public AddContactEvent(String userLogin, SimplifiedUser userToAdd) {
         this.userLogin = userLogin;
-        this.loginToAdd = loginToAdd;
+        this.userToAdd = userToAdd;
     }
 
     public String getUserLogin() {
         return userLogin;
     }
 
-    public String getLoginToAdd() {
-        return loginToAdd;
+    public SimplifiedUser getUserToAdd() {
+        return userToAdd;
     }
 }

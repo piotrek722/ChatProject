@@ -22,9 +22,9 @@ public class LogoutHandler implements Handler<LogoutEvent> {
     @Override
     public void dispatch(LogoutEvent message) {
         try {
-            server.logout(message.getUser());
+            server.logout(message.getUserLogin());
         } catch (RemoteException e) {
-            e.printStackTrace();
+            //
         }
         mainFrame.clearFrame();
         mainFrame.setVisible(false);

@@ -13,6 +13,7 @@ public class ShowSearchHandler implements Handler<ShowSearchEvent> {
 
     @Override
     public void dispatch(ShowSearchEvent message) {
+        searchDialog.setUser(message.getUser());
         searchDialog.setVisible(true);
     }
 }

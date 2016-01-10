@@ -65,18 +65,23 @@ public class LoginDialog extends JDialog {
         dispatcher.dispatch(new LoginEvent(login, password));
     }
 
-    private void onSignUp() {
-        dispatcher.dispatch(new SwitchLoginToRegisterEvent());
+    public void registeredSuccessfully() {
+        serverMsgLabel.setText("Registered successfully. Log in.");
+        serverMsgLabel.setForeground(Color.GREEN);
     }
 
-    public void logginginFailed() {
+    public void loggingInFailed() {
         serverMsgLabel.setText("Logging in failed");
         serverMsgLabel.setForeground(Color.RED);
     }
 
-    public void registeredSuccessfully() {
-        serverMsgLabel.setText("Registered successfully. Log in.");
-        serverMsgLabel.setForeground(Color.GREEN);
+    public void loggingInFailed(String message) {
+        serverMsgLabel.setText("Logging in failed: " + message);
+        serverMsgLabel.setForeground(Color.RED);
+    }
+
+    private void onSignUp() {
+        dispatcher.dispatch(new SwitchLoginToRegisterEvent());
     }
 
     public void clearPasswordField() {
@@ -86,5 +91,6 @@ public class LoginDialog extends JDialog {
     public void clearDialog() {
         loginTextField.setText("");
         passwordTextField.setText("");
+        serverMsgLabel.setText("");
     }
 }

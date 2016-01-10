@@ -5,6 +5,8 @@ import agh.client.gui.mainframe.MainFrame;
 import agh.router.Handler;
 import agh.server.Server;
 
+import java.rmi.RemoteException;
+
 public class AddContactHandler implements Handler<AddContactEvent> {
     private Server server;
     private MainFrame mainFrame;
@@ -16,8 +18,12 @@ public class AddContactHandler implements Handler<AddContactEvent> {
 
     @Override
     public void dispatch(AddContactEvent message) {
-        /*if(server.addContact(message.getUserLogin(), message.getLoginToAdd())) {
-            mainFrame.addContact(message.getLoginToAdd());
-        }*/
+        try {
+            if(server.addContact(message.getUserLogin(), message.getUserToAdd().getLogin())) {
+                mainFrame.addContact(message.getUserToAdd());
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 }

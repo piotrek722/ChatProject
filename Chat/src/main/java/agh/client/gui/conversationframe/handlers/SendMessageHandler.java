@@ -4,6 +4,8 @@ import agh.client.gui.conversationframe.events.SendMessageEvent;
 import agh.router.Handler;
 import agh.server.Server;
 
+import java.rmi.RemoteException;
+
 public class SendMessageHandler implements Handler<SendMessageEvent> {
     private Server server;
 
@@ -13,6 +15,10 @@ public class SendMessageHandler implements Handler<SendMessageEvent> {
 
     @Override
     public void dispatch(SendMessageEvent message) {
-        //server.sendMessage(message.getContent(), message.getDate(), message.getSender(), message.getReceivers());
+        try {
+            server.sendMessage(message.getClientMessage());
+        } catch (RemoteException e) {
+            //
+        }
     }
 }

@@ -4,13 +4,13 @@ import agh.model.simple.SimplifiedUser;
 import agh.router.DefaultEvent;
 
 public class LogoutEvent extends DefaultEvent {
-    private SimplifiedUser user;
+    private String userLogin;
 
-    public LogoutEvent(SimplifiedUser user) {
-        this.user = user;
+    public LogoutEvent(String userLogin) {
+        this.userLogin = userLogin;
     }
 
-    public SimplifiedUser getUser() {
-        return user;
+    public String getUserLogin() {
+        return userLogin;
     }
 }

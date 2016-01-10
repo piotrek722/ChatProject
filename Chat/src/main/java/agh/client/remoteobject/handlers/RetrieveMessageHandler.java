@@ -13,7 +13,6 @@ public class RetrieveMessageHandler implements Handler<RetrieveMessageEvent> {
 
     @Override
     public void dispatch(RetrieveMessageEvent message) {
-        //call some clientGui method which appends a message
-        //to a particular conversationTab
+        mainFrame.displayMessage(message.getMessage());
     }
 }

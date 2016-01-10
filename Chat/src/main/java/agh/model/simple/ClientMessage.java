@@ -41,6 +41,6 @@ public class ClientMessage implements Serializable {
 
     @Override
     public String toString() {
-        return simpleDateFormat.format(date) + " " + sender + " > " + content;
+        return simpleDateFormat.format(date) + " " + sender.getLogin() + " > " + content;
     }
 }

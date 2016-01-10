@@ -1,4 +1,4 @@
-package agh.model.db;
+package agh.model.simple;
 
 import agh.model.simple.ClientMessage;
 
@@ -10,12 +10,13 @@ import java.util.List;
  * Created by Peter on 2015-11-21.
  * Project name : ChatProject
  */
-public class Conversation  implements Serializable {
+public class Conversation implements Serializable {
     
     private static final long serialVersionUID = 1L;
-    private List<ClientMessage> messages = new ArrayList<>();
+    private List<ClientMessage> messages;
 
     public Conversation() {
+        messages = new ArrayList<>();
     }
 
     public List<ClientMessage> getMessages() {

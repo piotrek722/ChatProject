@@ -61,13 +61,18 @@ public class RegisterDialog extends JDialog {
         dispatcher.dispatch(new RegisterEvent(login, firstName, lastName, password));
     }
 
-    private void onSignIn() {
-        dispatcher.dispatch(new SwitchRegisterToLoginEvent());
-    }
-
     public void registeringFailed() {
         serverMsgLabel.setText("Registering failed");
         serverMsgLabel.setForeground(Color.RED);
+    }
+
+    public void registeringFailed(String message) {
+        serverMsgLabel.setText("Registering failed: " + message);
+        serverMsgLabel.setForeground(Color.RED);
+    }
+
+    private void onSignIn() {
+        dispatcher.dispatch(new SwitchRegisterToLoginEvent());
     }
 
     public void clearPasswordField() {

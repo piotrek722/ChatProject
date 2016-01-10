@@ -35,11 +35,11 @@ public class LoginHandler implements Handler<LoginEvent> {
                 mainFrame.setUser(contact);
                 mainFrame.setVisible(true);
             } else {
-                loginDialog.logginginFailed();
+                loginDialog.loggingInFailed();
                 loginDialog.clearPasswordField();
             }
         } catch (RemoteException e) {
-            e.printStackTrace();
+            loginDialog.loggingInFailed(e.toString());
         }
 
     }

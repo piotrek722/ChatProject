@@ -2,6 +2,7 @@ package agh.client.gui.mainframe;
 
 import agh.client.gui.conversationframe.ConversationFrame;
 import agh.client.gui.mainframe.events.*;
+import agh.model.simple.ClientMessage;
 import agh.model.simple.SimplifiedUser;
 import agh.router.DefaultEventDispatcher;
 
@@ -17,7 +18,7 @@ import java.util.logging.Logger;
 public class MainFrame extends JFrame {
     private JPanel mainPanel;
     private JList contactJList;
-    private DefaultListModel<String> contacts;
+    private DefaultListModel<SimplifiedUser> contacts;
     private JTabbedPane tabbedPane;
     private JPopupMenu popupMenu;
 
@@ -25,7 +26,7 @@ public class MainFrame extends JFrame {
     private SimplifiedUser user;
 
     private DefaultEventDispatcher dispatcher;
-    private List<ConversationFrame> conversationFrames;
+    private Map<Integer, ConversationFrame> conversationFrames;
 
     private static final Logger LOGGER = Logger.getLogger("Logger");
     private static final int CLIENT_WIDTH = 200;
@@ -34,7 +35,7 @@ public class MainFrame extends JFrame {
     public MainFrame(DefaultEventDispatcher dispatcher) throws UnsupportedLookAndFeelException {
         super("Chat");
         this.dispatcher = dispatcher;
-        this.conversationFrames = new ArrayList<>();
+        this.conversationFrames = new HashMap<>();
         UIManager.setLookAndFeel(new NimbusLookAndFeel());
         setContentPane(mainPanel);
         setSize(CLIENT_WIDTH, CLIENT_HEIGHT);
@@ -43,12 +44,12 @@ public class MainFrame extends JFrame {
         createMenuBar();
         createPopupMenu();
 
-        contacts.addElement("Adrian Puchacki");
+        /*contacts.addElement("Adrian Puchacki");
         contacts.addElement("Jan Paweł");
         contacts.addElement("Jan Paweł 2");
         contacts.addElement("Kuba Nowicki");
         contacts.addElement("Waldemar Walasik");
-        contacts.addElement("Wojciech Puczyk");
+        contacts.addElement("Wojciech Puczyk");*/
 
         contactJList.addKeyListener(new KeyAdapter() {
             @Override
@@ -130,13 +131,16 @@ public class MainFrame extends JFrame {
         contactJList = new JList(contacts);
     }
 
-    //SimplifiedUser
-    public void setUserLogin(String userLogin) {
-        this.userLogin = userLogin;
-    }
-
     public void setUser(SimplifiedUser user) {
         this.user = user;
+    }
+
+    public void setContacts(List<SimplifiedUser> contacts) {
+        this.contacts.removeAllElements();
+        for (SimplifiedUser contact : contacts) {
+            this.contacts.addElement(contact);
+        }
+        sortJlist();
     }
 
     private void sortJlist() {
@@ -145,65 +149,55 @@ public class MainFrame extends JFrame {
 
         Arrays.sort(elems);
         for (Object elem : elems) {
-            contacts.addElement((String) elem);
+            contacts.addElement((SimplifiedUser) elem);
         }
     }
 
-    public void clearFrame() {
-        contacts.removeAllElements();
-        conversationFrames.clear();
-        userLogin = null;
+    private void onAccountSettings() {
+        dispatcher.dispatch(new ShowAccountSettingsEvent(user));
     }
 
     private void onSearch() {
         dispatcher.dispatch(new ShowSearchEvent());
     }
 
-    private void onAccountSettings() {
-        //dispatcher.dispatch(new ShowAccountSettingsEvent(userLogin));
-    }
-
-    private void onExit() {
-        dispatcher.dispatch(new CloseEvent(userLogin));
+    private void onDeleteContact() {
+        List<String> values = contactJList.getSelectedValuesList();
+        dispatcher.dispatch(new DeleteContactsEvent(user.getLogin(), values));
     }
 
     private void onLogOut() {
-        dispatcher.dispatch(new LogoutEvent(user));
+        dispatcher.dispatch(new LogoutEvent(user.getLogin()));
     }
 
-    private void onDeleteContact() {
-        List<String> values = contactJList.getSelectedValuesList();
-        dispatcher.dispatch(new DeleteContactsEvent(userLogin, values));
+    private void onExit() {
+        dispatcher.dispatch(new CloseEvent(user.getLogin()));
     }
 
-    public void addContact(String contact) {
+    public void addContact(SimplifiedUser contact) {
         contacts.addElement(contact);
         sortJlist();
     }
 
-    public void deleteContacts(List<String> values) {
-        for (String elem : values) {
-            contacts.removeElement(elem);
+    public void deleteContacts(List<SimplifiedUser> contacts) {
+        for (SimplifiedUser contact : contacts) {
+            this.contacts.removeElement(contact);
         }
     }
 
-    public void setContacts(List<String> contacts) {
-        this.contacts.removeAllElements();
-        for (String contact : contacts) {
-            this.contacts.addElement(contact);
-        }
-        sortJlist();
+    public void displayMessage(ClientMessage message) {
+        conversationFrames.get(message.getReceivers().hashCode()).displayMessage(message);
     }
 
     private void openConversationWindow() {
-        List<String> selectedContacts = new ArrayList<>();
+        List<SimplifiedUser> selectedContacts = new ArrayList<>();
 
         for (int index : contactJList.getSelectedIndices()) {
             selectedContacts.add(contacts.elementAt(index));
         }
 
-        for (ConversationFrame window : conversationFrames) {
-            List<String> windowContactList = window.getUsers();
+        for (ConversationFrame window : conversationFrames.values()) {
+            List<SimplifiedUser> windowContactList = window.getParticipants();
             if (Arrays.equals(windowContactList.toArray(), selectedContacts.toArray())) {
                 if (!window.isVisible()) {
                     window.setVisible(true);
@@ -214,9 +208,16 @@ public class MainFrame extends JFrame {
         }
 
         try {
-            conversationFrames.add(new ConversationFrame(userLogin, selectedContacts, dispatcher));
+            //conversationFrames.add(new ConversationFrame(user, selectedContacts, dispatcher));
+            conversationFrames.put(selectedContacts.hashCode(), new ConversationFrame(user, selectedContacts, dispatcher));
         } catch (UnsupportedLookAndFeelException e) {
             LOGGER.log(Level.SEVERE, e.toString());
         }
+    }
+
+    public void clearFrame() {
+        contacts.removeAllElements();
+        conversationFrames.clear();
+        userLogin = null;
     }
 }

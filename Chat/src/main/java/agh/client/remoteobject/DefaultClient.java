@@ -19,6 +19,6 @@ public class DefaultClient extends UnicastRemoteObject implements Client, Serial
 
     @Override
     public void retrieveMessage(ClientMessage message) throws RemoteException {
-        dispatcher.dispatch(new RetrieveMessageEvent());
+        dispatcher.dispatch(new RetrieveMessageEvent(message));
     }
 }

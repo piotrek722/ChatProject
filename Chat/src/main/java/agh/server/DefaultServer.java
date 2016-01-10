@@ -2,7 +2,7 @@ package agh.server;
 
 import agh.client.remoteobject.Client;
 import agh.model.db.ContactList;
-import agh.model.db.Conversation;
+import agh.model.simple.Conversation;
 import agh.model.db.Message;
 import agh.model.db.User;
 import agh.model.simple.ClientMessage;
@@ -55,13 +55,13 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public Boolean unregisterClient(User user) throws RemoteException {
+    public Boolean unregisterClient(String login) throws RemoteException {
         Boolean isSuccessful = false;
         Session session = HibernateUtils.getSession();
         Transaction transaction = session.beginTransaction();
 
         String command = "select u from User u where u.login like :login";
-        Query query = session.createQuery(command).setParameter("login", user.getLogin());
+        Query query = session.createQuery(command).setParameter("login", login);
         List<User> found = query.list();
 
         if(!found.isEmpty()) {
@@ -102,25 +102,29 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public Boolean logout(SimplifiedUser user) throws RemoteException {
-        if(usersOnline.get(user.getLogin()) != null) {
-            usersOnline.remove(user.getLogin());
+    public Boolean logout(String login) throws RemoteException {
+        if(usersOnline.get(login) != null) {
+            usersOnline.remove(login);
             return true;
         }
         return false;
     }
 
     @Override
-    public Boolean sendMessage(String content, Date date, User sender, List<String> logins) throws RemoteException {
-        if(usersOnline.get(sender.getLogin()) == null) {
+    public Boolean sendMessage(ClientMessage clientmessage) throws RemoteException {
+        if(usersOnline.get(clientmessage.getSender()) == null) {
             return false;
         }
 
         Session session = HibernateUtils.getSession();
         Transaction transaction = session.beginTransaction();
 
+        String commandUser = "select u from User u where u.login like :login";
+        Query queryUser = session.createQuery(commandUser).setParameter("login", clientmessage.getSender());
+        User sender = (User) queryUser.list().get(0);
+
         String command = "select u from User u where u.login in (:logins)";
-        Query query = session.createQuery(command).setParameterList("logins", logins);
+        Query query = session.createQuery(command).setParameterList("logins", clientmessage.getReceivers());
         List<User> receivers = query.list();
 
         transaction.commit();
@@ -132,17 +136,17 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
             }
         }
 
-        Message message = new Message(content, date, sender, receivers);
+        Message message = new Message(clientmessage.getContent(), clientmessage.getDate(), sender, receivers);
 
-        SimplifiedUser csender = new SimplifiedUser(sender.getLogin(),sender.getName(),sender.getLastName());
+        SimplifiedUser csender = new SimplifiedUser(sender.getLogin(), sender.getName(), sender.getLastName());
 
-        List<SimplifiedUser> creceivers = new ArrayList<>();
+        List<SimplifiedUser> simplifiedReceivers = new ArrayList<>();
         for (User u: receivers) {
-            creceivers.add(new SimplifiedUser(u.getLogin(),u.getName(),u.getLastName()));
+            simplifiedReceivers.add(new SimplifiedUser(u.getLogin(),u.getName(),u.getLastName()));
         }
 
-        ClientMessage clientmessage = new ClientMessage(content,date,csender,creceivers);
-        usersOnline.get(sender.getLogin()).retrieveMessage(clientmessage);
+        //ClientMessage clientmessage = new ClientMessage(content, date, csender, simplifiedReceivers);
+        usersOnline.get(csender.getLogin()).retrieveMessage(clientmessage);
 
         for(User receiver : receivers) {
             usersOnline.get(receiver.getLogin()).retrieveMessage(clientmessage);
@@ -159,9 +163,13 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public Boolean addContact(User user, String contact) throws RemoteException {
+    public Boolean addContact(String login, String contact) throws RemoteException {
         Session session = HibernateUtils.getSession();
         Transaction transaction = session.beginTransaction();
+
+        String commandUser = "select u from User u where u.login like :login";
+        Query queryUser = session.createQuery(commandUser).setParameter("login", login);
+        User user = (User) queryUser.list().get(0);
 
         User contactToAdd = null;
         String command = "select u from User u where u.login like :contact";
@@ -175,9 +183,9 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
             return false;
         }
 
-        user.getContactList().setContactListId(this.getContacts(user).getContactListId());
+        user.getContactList().setContactListId(this.getContacts(login).getContactListId());
 
-        for(User u: this.getContacts(user).getUserList()){
+        for(User u: this.getContacts(login).getUserList()){
             if(u.getLogin().equals(contactToAdd.getLogin())){
                 session.close();
                 return true;
@@ -194,8 +202,15 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public Boolean deleteContact(User user, String contact) throws RemoteException {
-        ContactList contactList = this.getContacts(user);
+    public Boolean deleteContact(String login, String contact) throws RemoteException {
+        Session session = HibernateUtils.getSession();
+        Transaction transaction = session.beginTransaction();
+
+        String commandUser = "select u from User u where u.login like :login";
+        Query queryUser = session.createQuery(commandUser).setParameter("login", login);
+        User user = (User) queryUser.list().get(0);
+
+        ContactList contactList = this.getContacts(login);
         List<User> userList = contactList.getUserList();
         User contactAsUser = null;
 
@@ -214,9 +229,6 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
         contactList.setUserList(userList);
         user.setContactList(contactList);
 
-        Session session = HibernateUtils.getSession();
-        Transaction transaction = session.beginTransaction();
-
         session.saveOrUpdate(user);
 
         transaction.commit();
@@ -225,7 +237,7 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public List<SimplifiedUser> getUserContacts(User user) throws RemoteException {
+    public List<SimplifiedUser> getUserContacts(String login) throws RemoteException {
         Session session = HibernateUtils.getSession();
         Transaction transaction = session.beginTransaction();
 
@@ -233,7 +245,7 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
         List<SimplifiedUser> contacts = new ArrayList<>();
 
         String command = "select cl from User u inner join u.contactList cl where u.login like :login";
-        Query query = session.createQuery(command).setParameter("login", user.getLogin());
+        Query query = session.createQuery(command).setParameter("login", login);
         if(!query.list().isEmpty()) {
             contactList = (ContactList) query.list().get(0);
 
@@ -249,14 +261,14 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public ContactList getContacts(User user) throws RemoteException {
+    public ContactList getContacts(String login) throws RemoteException {
         Session session = HibernateUtils.getSession();
         Transaction transaction = session.beginTransaction();
 
         ContactList contactList = null;
 
         String command = "select cl from User u inner join u.contactList cl where u.login like :login";
-        Query query = session.createQuery(command).setParameter("login", user.getLogin());
+        Query query = session.createQuery(command).setParameter("login", login);
         if(!query.list().isEmpty()) {
             contactList = (ContactList) query.list().get(0);
         }
@@ -268,7 +280,7 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
     }
 
     @Override
-    public Conversation getMessages(User user, List<String> selectedContacts) throws RemoteException {
+    public Conversation getMessages(String login, List<String> selectedContacts) throws RemoteException {
         Session session = HibernateUtils.getSession();
         Transaction transaction = session.beginTransaction();
 
@@ -281,7 +293,7 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
                 " and (select r from m.receivers r) in (select u from User u where u in :participants or u.login like :sender)";
 
         query = session.createQuery(command).setParameterList("participants", selectedUsers).setParameter("size", selectedUsers.size())
-                .setParameter("sender", user.getLogin());
+                .setParameter("sender", login);
         List<Message> messages = query.list();
 
         transaction.commit();

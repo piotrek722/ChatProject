@@ -1,6 +1,8 @@
 package agh.client.gui.searchdialog;
 
+import agh.client.gui.searchdialog.events.AddContactEvent;
 import agh.client.gui.searchdialog.events.SearchEvent;
+import agh.model.simple.SimplifiedUser;
 import agh.router.DefaultEventDispatcher;
 
 import javax.swing.*;
@@ -8,6 +10,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.List;
 
 public class SearchDialog extends JDialog {
     private JPanel contentPane;
@@ -19,6 +22,7 @@ public class SearchDialog extends JDialog {
     private JTable resultsTable;
     private DefaultTableModel model;
 
+    private SimplifiedUser user;
     private DefaultEventDispatcher dispatcher;
 
     private static final int SEARCH_WIDTH = 500;
@@ -73,12 +77,23 @@ public class SearchDialog extends JDialog {
     }
 
     private void onAdd() {
-        //User&Messages
+        int selectedRow = resultsTable.getSelectedRow();
+        String loginToAdd = (String) resultsTable.getValueAt(selectedRow, 0);
+        String fname = (String) resultsTable.getValueAt(selectedRow, 1);
+        String lname = (String) resultsTable.getValueAt(selectedRow, 2);
+        dispatcher.dispatch(new AddContactEvent(user.getLogin(), new SimplifiedUser(loginToAdd, fname, lname)));
     }
 
-    public void displayResultsOfSearch() {
+    public void displayResultsOfSearch(List<SimplifiedUser> users) {
         clearJTable();
-        //sth
+        for (SimplifiedUser user : users) {
+            Object[] row = {user.getLogin(), user.getFirstName(), user.getLastName()};
+            model.addRow(row);
+        }
+    }
+
+    public void setUser(SimplifiedUser user) {
+        this.user = user;
     }
 
     public void clearJTable() {

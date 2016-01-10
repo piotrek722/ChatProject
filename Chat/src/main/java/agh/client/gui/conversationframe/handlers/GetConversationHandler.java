@@ -2,8 +2,11 @@ package agh.client.gui.conversationframe.handlers;
 
 import agh.client.gui.conversationframe.events.GetConversationEvent;
 import agh.client.gui.mainframe.events.GetContactsEvent;
+import agh.model.simple.Conversation;
 import agh.router.Handler;
 import agh.server.Server;
+
+import java.rmi.RemoteException;
 
 public class GetConversationHandler implements Handler<GetConversationEvent>{
     private Server server;
@@ -14,7 +17,12 @@ public class GetConversationHandler implements Handler<GetConversationEvent>{
 
     @Override
     public void dispatch(GetConversationEvent message) {
-        //server.getMessages(message.getSender(), message.getReceivers());
-        //converseWindow.displayConversation(List<Msg>)
+        Conversation conversation;
+        try {
+            conversation = server.getMessages(message.getSender(), message.getReceivers());
+            message.getConversationFrame().displayConversation(conversation);
+        } catch (RemoteException e) {
+            //
+        }
     }
 }

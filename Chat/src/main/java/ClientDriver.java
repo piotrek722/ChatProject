@@ -65,7 +65,7 @@ public class ClientDriver {
         eventDispatcher.registerChannel(AddContactEvent.class, new AddContactHandler(server, mainFrame));
 
         //AccountSettingsDialog events
-        eventDispatcher.registerChannel(SaveAccountChangesEvent.class, new SaveAccountChangesHandler(server, accountSettings));
+        eventDispatcher.registerChannel(SaveAccountChangesEvent.class, new SaveAccountChangesHandler(server, mainFrame, accountSettings));
         eventDispatcher.registerChannel(ChangePasswordEvent.class, new ChangePasswordHandler(server, accountSettings));
 
         //Client events

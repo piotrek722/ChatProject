@@ -56,15 +56,10 @@ public class AccountSettingsDialog extends JDialog {
     }
 
     private void onChangePassword() {
-        String oldPassword = currentPasswordField.getPassword().toString();
-        String newPassword = newPasswordField.getPassword().toString();
+        String oldPassword = String.valueOf(currentPasswordField.getPassword());
+        String newPassword = String.valueOf(newPasswordField.getPassword());
 
-        dispatcher.dispatch(new ChangePasswordEvent(oldPassword, newPassword));
-    }
-
-    public void displayChangesSavedSuccessfully() {
-        profileLabel.setText("Changes saved successfully");
-        profileLabel.setForeground(Color.GREEN);
+        dispatcher.dispatch(new ChangePasswordEvent(user.getLogin(), oldPassword, newPassword));
     }
 
     public void setUser(SimplifiedUser user) {
@@ -76,6 +71,11 @@ public class AccountSettingsDialog extends JDialog {
         this.loginField.setText(this.user.getLogin());
         this.fnameField.setText(this.user.getFirstName());
         this.lnameField.setText(this.user.getLastName());
+    }
+
+    public void displayChangesSavedSuccessfully() {
+        profileLabel.setText("Changes saved successfully");
+        profileLabel.setForeground(Color.GREEN);
     }
 
     public void displaySavingChangesFailed() {
@@ -91,6 +91,11 @@ public class AccountSettingsDialog extends JDialog {
     public void displayChangingPasswordFailed() {
         passwordLabel.setText("Changing password failed");
         passwordLabel.setForeground(Color.RED);
+    }
+
+    public void clearPasswords() {
+        currentPasswordField.setText("");
+        newPasswordField.setText("");
     }
 
     private void clearDialog() {

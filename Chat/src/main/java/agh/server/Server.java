@@ -25,4 +25,6 @@ public interface Server extends Remote, Serializable {
     List<String> getUsersOnline() throws  RemoteException;
     List<SimplifiedUser> getAllUsers() throws RemoteException;
     List<SimplifiedUser> findUser(String login, String name, String lastName) throws RemoteException;
+    SimplifiedUser saveAccountChanges(String login, String name, String lastName) throws RemoteException;
+    Boolean changePassword(String login, String oldPassword, String newPassword) throws RemoteException;
 }

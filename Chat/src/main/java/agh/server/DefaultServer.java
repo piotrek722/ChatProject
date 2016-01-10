@@ -381,4 +381,53 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
 
         return contacts;
     }
+
+    @Override
+    public SimplifiedUser saveAccountChanges(String login, String name, String lastName) throws RemoteException {
+        Session session = HibernateUtils.getSession();
+        Transaction transaction = session.beginTransaction();
+
+        String command = "select u from User u where u.login like :login";
+        Query query = session.createQuery(command).setParameter("login", login);
+        User user = (User) query.list().get(0);
+
+        if (name != "") {
+            user.setName(name);
+        }
+
+        if (lastName != "") {
+            user.setLastName(lastName);
+        }
+
+        session.saveOrUpdate(user);
+
+        transaction.commit();
+        session.close();
+
+        return new SimplifiedUser(login, name, lastName);
+    }
+
+    @Override
+    public Boolean changePassword(String login, String oldPassword, String newPassword) throws RemoteException {
+        Boolean isSuccessful = false;
+        Session session = HibernateUtils.getSession();
+        Transaction transaction = session.beginTransaction();
+
+        String command = "select u from User u where u.login like :login and u.password like :password";
+        Query query = session.createQuery(command).setParameter("login", login).setParameter("password", oldPassword);
+        List<User> found = query.list();
+
+
+        if (!found.isEmpty()) {
+            User user = found.get(0);
+            user.setPassword(newPassword);
+            session.saveOrUpdate(user);
+            isSuccessful = true;
+        }
+
+        transaction.commit();
+        session.close();
+
+        return isSuccessful;
+    }
 }

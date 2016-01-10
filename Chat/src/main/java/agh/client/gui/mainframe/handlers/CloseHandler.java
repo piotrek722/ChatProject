@@ -4,6 +4,8 @@ import agh.client.gui.mainframe.events.CloseEvent;
 import agh.router.Handler;
 import agh.server.Server;
 
+import java.rmi.RemoteException;
+
 public class CloseHandler implements Handler<CloseEvent> {
     private Server server;
 
@@ -13,6 +15,10 @@ public class CloseHandler implements Handler<CloseEvent> {
 
     @Override
     public void dispatch(CloseEvent message) {
-        //server.unregisterClient(message.getUserLogin());
+        try {
+            server.logout(message.getUserLogin());
+        } catch (RemoteException e) {
+            //
+        }
     }
 }

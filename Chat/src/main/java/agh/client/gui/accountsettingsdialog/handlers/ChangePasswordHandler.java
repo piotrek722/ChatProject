@@ -5,6 +5,8 @@ import agh.client.gui.accountsettingsdialog.AccountSettingsDialog;
 import agh.router.Handler;
 import agh.server.Server;
 
+import java.rmi.RemoteException;
+
 public class ChangePasswordHandler implements Handler<ChangePasswordEvent> {
     private Server server;
     private AccountSettingsDialog accountSettingsDialog;
@@ -16,6 +18,16 @@ public class ChangePasswordHandler implements Handler<ChangePasswordEvent> {
 
     @Override
     public void dispatch(ChangePasswordEvent message) {
-
+        try {
+            if (server.changePassword(message.getLogin(), message.getCurrentPassword(), message.getNewPassword())){
+                accountSettingsDialog.displayPasswordChangedSuccessfully();
+                accountSettingsDialog.clearPasswords();
+            } else {
+                accountSettingsDialog.displayChangingPasswordFailed();
+                accountSettingsDialog.clearPasswords();
+            }
+        } catch (RemoteException e) {
+            //
+        }
     }
 }

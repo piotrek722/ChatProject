@@ -3,14 +3,13 @@ package agh.client.gui.searchdialog;
 import agh.client.gui.searchdialog.events.AddContactEvent;
 import agh.client.gui.searchdialog.events.SearchEvent;
 import agh.model.simple.SimplifiedUser;
+import agh.model.simple.SimplifiedUserList;
 import agh.router.DefaultEventDispatcher;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.util.List;
 
 public class SearchDialog extends JDialog {
     private JPanel contentPane;
@@ -81,7 +80,7 @@ public class SearchDialog extends JDialog {
         }
     }
 
-    public void displayResultsOfSearch(List<SimplifiedUser> users) {
+    public void displayResultsOfSearch(SimplifiedUserList users) {
         clearJTable();
         users.stream().forEach(user -> model.addElement(user));
     }

@@ -5,6 +5,7 @@ import agh.client.gui.conversationframe.events.SendMessageEvent;
 import agh.model.simple.ClientMessage;
 import agh.model.simple.Conversation;
 import agh.model.simple.SimplifiedUser;
+import agh.model.simple.SimplifiedUserList;
 import agh.router.EventDispatcher;
 
 import javax.swing.*;
@@ -22,13 +23,13 @@ public class ConversationFrame extends JFrame{
     private JButton sendButton;
 
     private SimplifiedUser user;
-    private List<SimplifiedUser> participants;
+    private SimplifiedUserList participants;
     private EventDispatcher dispatcher;
 
     private static final int CONVERSATION_FRAME_WIDTH = 400;
     private static final int CONVERSATION_FRAME_HEIGHT = 300;
 
-    public ConversationFrame(SimplifiedUser user, List<SimplifiedUser> participants, EventDispatcher dispatcher) throws UnsupportedLookAndFeelException {
+    public ConversationFrame(SimplifiedUser user, SimplifiedUserList participants, EventDispatcher dispatcher) throws UnsupportedLookAndFeelException {
         super(String.join(", ", participants.stream().map(e -> e.getLogin()).collect(Collectors.toList())));
         this.user = user;
         this.participants = participants;

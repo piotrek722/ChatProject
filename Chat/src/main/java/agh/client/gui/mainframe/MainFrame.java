@@ -4,6 +4,7 @@ import agh.client.gui.conversationframe.ConversationFrame;
 import agh.client.gui.mainframe.events.*;
 import agh.model.simple.ClientMessage;
 import agh.model.simple.SimplifiedUser;
+import agh.model.simple.SimplifiedUserList;
 import agh.router.DefaultEventDispatcher;
 
 import javax.swing.*;
@@ -11,7 +12,6 @@ import javax.swing.plaf.nimbus.NimbusLookAndFeel;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,10 +19,8 @@ public class MainFrame extends JFrame {
     private JPanel mainPanel;
     private JList contactJList;
     private DefaultListModel<SimplifiedUser> contacts;
-    private JTabbedPane tabbedPane;
     private JPopupMenu popupMenu;
 
-    private String userLogin;
     private SimplifiedUser user;
 
     private DefaultEventDispatcher dispatcher;
@@ -128,7 +126,7 @@ public class MainFrame extends JFrame {
         this.user = user;
     }
 
-    public void setContacts(List<SimplifiedUser> contacts) {
+    public void setContacts(SimplifiedUserList contacts) {
         this.contacts.removeAllElements();
         for (SimplifiedUser contact : contacts) {
             this.contacts.addElement(contact);
@@ -155,7 +153,7 @@ public class MainFrame extends JFrame {
     }
 
     private void onDeleteContact() {
-        List<SimplifiedUser> values = contactJList.getSelectedValuesList();
+        SimplifiedUserList values = (SimplifiedUserList) contactJList.getSelectedValuesList();
         dispatcher.dispatch(new DeleteContactsEvent(user.getLogin(), values));
     }
 
@@ -172,14 +170,14 @@ public class MainFrame extends JFrame {
         sortJlist();
     }
 
-    public void deleteContacts(List<SimplifiedUser> contacts) {
+    public void deleteContacts(SimplifiedUserList contacts) {
         for (SimplifiedUser contact : contacts) {
             this.contacts.removeElement(contact);
         }
     }
 
     public void displayMessage(ClientMessage message) {
-        List<SimplifiedUser> receivers = message.getReceivers();
+        SimplifiedUserList receivers = message.getReceivers();
         receivers.add(message.getSender());
         receivers.remove(user);
 
@@ -198,7 +196,7 @@ public class MainFrame extends JFrame {
     }
 
     private void openConversationWindow() {
-        List<SimplifiedUser> selectedContacts = new ArrayList<>();
+        SimplifiedUserList selectedContacts = new SimplifiedUserList();
 
         for (int index : contactJList.getSelectedIndices()) {
             selectedContacts.add(contacts.elementAt(index));
@@ -222,6 +220,6 @@ public class MainFrame extends JFrame {
     public void clearFrame() {
         contacts.removeAllElements();
         conversationFrames.clear();
-        userLogin = null;
+        user = null;
     }
 }

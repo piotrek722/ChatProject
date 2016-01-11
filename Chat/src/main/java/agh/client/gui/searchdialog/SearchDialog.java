@@ -83,9 +83,7 @@ public class SearchDialog extends JDialog {
 
     public void displayResultsOfSearch(List<SimplifiedUser> users) {
         clearJTable();
-        for (SimplifiedUser user: users) {
-            model.addElement(user);
-        }
+        users.stream().forEach(user -> model.addElement(user));
     }
 
     public void setUser(SimplifiedUser user) {

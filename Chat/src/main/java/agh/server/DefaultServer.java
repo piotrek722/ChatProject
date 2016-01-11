@@ -140,14 +140,7 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
 
         Message message = new Message(clientmessage.getContent(), clientmessage.getDate(), sender, receivers);
 
-        SimplifiedUser csender = new SimplifiedUser(sender.getLogin(), sender.getName(), sender.getLastName());
-
-        List<SimplifiedUser> simplifiedReceivers = new ArrayList<>();
-        for (User u: receivers) {
-            simplifiedReceivers.add(new SimplifiedUser(u.getLogin(),u.getName(),u.getLastName()));
-        }
-
-        usersOnline.get(csender.getLogin()).retrieveMessage(clientmessage);
+        usersOnline.get(sender.getLogin()).retrieveMessage(clientmessage);
 
         for(User receiver : receivers) {
             if (usersOnline.get(receiver.getLogin()) != null) {
@@ -267,9 +260,9 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
         if(!query.list().isEmpty()) {
             contactList = (ContactList) query.list().get(0);
 
-            for (User u : contactList.getUserList()) {
-                contacts.add(new SimplifiedUser(u.getLogin(),u.getName(),u.getLastName()));
-            }
+            contactList.getUserList().stream().forEach(user ->
+                contacts.add(new SimplifiedUser(user.getLogin(), user.getName(), user.getLastName()))
+            );
         }
 
         transaction.commit();
@@ -322,9 +315,10 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
 
         for (Message m: messages) {
             SimplifiedUser c = new SimplifiedUser(m.getSender().getLogin(),m.getSender().getName(),m.getSender().getLastName());
-            for (User u : m.getReceivers()) {
-                creceivers.add(new SimplifiedUser(u.getLogin(),u.getName(),u.getLastName()));
-            }
+
+            m.getReceivers().stream().forEach(u ->
+                creceivers.add(new SimplifiedUser(u.getLogin(),u.getName(),u.getLastName()))
+            );
             clientmessages.add(new ClientMessage(m.getContent(),m.getDate(),c,creceivers));
         }
 
@@ -355,9 +349,8 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
         session.close();
 
         List<SimplifiedUser> contacts = new ArrayList<>();
-        for (User u : users) {
-            contacts.add(new SimplifiedUser(u.getLogin(),u.getName(),u.getLastName()));
-        }
+
+        users.stream().forEach(u -> contacts.add(new SimplifiedUser(u.getLogin(),u.getName(),u.getLastName())));
 
         return contacts;
     }
@@ -386,9 +379,7 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
 
         List<SimplifiedUser> contacts = new ArrayList<>();
 
-        for (User u: users) {
-            contacts.add(new SimplifiedUser(u.getLogin(),u.getName(),u.getLastName()));
-        }
+        users.stream().forEach(u -> contacts.add(new SimplifiedUser(u.getLogin(),u.getName(),u.getLastName())));
 
         transaction.commit();
         session.close();

@@ -189,9 +189,10 @@ public class MainFrame extends JFrame {
                 frame = new ConversationFrame(user, receivers, dispatcher);
                 conversationFrames.put(receivers.hashCode(), frame);
             } catch (UnsupportedLookAndFeelException e) {
-                e.printStackTrace();
+                //e.printStackTrace();
             }
         }
+
         frame.setVisible(true);
         frame.displayMessage(message);
     }

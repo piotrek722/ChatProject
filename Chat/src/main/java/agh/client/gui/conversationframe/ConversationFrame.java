@@ -61,17 +61,11 @@ public class ConversationFrame extends JFrame{
     private void onSendMessage() {
         Date date = new Date();
         String content = messageTextField.getText();
+        messageTextField.setText("");
 
         ClientMessage message = new ClientMessage(content, date, user, participants);
 
         dispatcher.dispatch(new SendMessageEvent(message));
-
-        messageTextField.setText("");
-        //conversationTextArea.append(message.toString() + "\n");
-    }
-
-    public List<SimplifiedUser> getParticipants() {
-        return participants;
     }
 
     public void displayMessage(ClientMessage message) {
@@ -79,8 +73,6 @@ public class ConversationFrame extends JFrame{
     }
 
     public void displayConversation(Conversation conversation) {
-        for (ClientMessage message : conversation.getMessages()) {
-            displayMessage(message);
-        }
+        conversation.getMessages().stream().forEach(message -> displayMessage(message));
     }
 }

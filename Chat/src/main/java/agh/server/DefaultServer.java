@@ -221,24 +221,22 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
 
         User user = found.get(0);
 
-        ContactList contactList = this.getContacts(login);
-        List<User> userList = contactList.getUserList();
-        User contactAsUser = null;
+        User contactToRemove = null;
 
-        for(User item : userList) {
-            if(item.getLogin().equals(contact)) {
-                contactAsUser = item;
-                break;
-            }
+        String command = "select u from User u where u.login like :contact";
+        Query query = session.createQuery(command).setParameter("contact", contact);
+        if(!query.list().isEmpty()) {
+            contactToRemove = (User) query.list().get(0);
         }
 
-        if(contactAsUser == null) {
-            return true;
+        if(contactToRemove == null) {
+            session.close();
+            return false;
         }
 
-        userList.remove(contactAsUser);
-        contactList.setUserList(userList);
-        user.setContactList(contactList);
+        user.getContactList().setContactListId(this.getContacts(login).getContactListId());
+
+        user.getContactList().getUserList().remove(contactToRemove);
 
         session.saveOrUpdate(user);
 
@@ -303,6 +301,8 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
         command = "select m from Message m where size(m.receivers) = (:size)" +
                 " and m.sender in (select u from User u where u in :participants or u.login like :sender)" +
                 " and (select r from m.receivers r) in (select u from User u where u in :participants or u.login like :sender)";
+
+
 
         query = session.createQuery(command).setParameterList("participants", selectedUsers).setParameter("size", selectedUsers.size())
                 .setParameter("sender", login);

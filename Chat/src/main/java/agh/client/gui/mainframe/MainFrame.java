@@ -153,7 +153,10 @@ public class MainFrame extends JFrame {
     }
 
     private void onDeleteContact() {
-        SimplifiedUserList values = (SimplifiedUserList) contactJList.getSelectedValuesList();
+        SimplifiedUserList values = new SimplifiedUserList();
+        for (Object val : contactJList.getSelectedValuesList()) {
+            values.add((SimplifiedUser) val);
+        }
         dispatcher.dispatch(new DeleteContactsEvent(user.getLogin(), values));
     }
 

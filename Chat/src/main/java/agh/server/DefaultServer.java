@@ -300,13 +300,15 @@ public class DefaultServer extends UnicastRemoteObject implements Server {
 
         command = "select m from Message m where size(m.receivers) = (:size)" +
                 " and m.sender in (select u from User u where u in :participants or u.login like :sender)" +
-                " and (select r from m.receivers r) in (select u from User u where u in :participants or u.login like :sender)";
-
-
+                " and not exists (select r from m.receivers r where r not in (select u from User u where u in :participants or u.login like :sender))";
 
         query = session.createQuery(command).setParameterList("participants", selectedUsers).setParameter("size", selectedUsers.size())
                 .setParameter("sender", login);
         List<Message> messages = query.list();
+
+        for (Message message : messages) {
+            System.out.println(message.getSender() + " -> " + message.getReceivers());
+        }
 
         transaction.commit();
         session.close();

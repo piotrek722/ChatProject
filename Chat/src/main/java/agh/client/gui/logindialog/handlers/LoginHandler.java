@@ -35,6 +35,7 @@ public class LoginHandler implements Handler<LoginEvent> {
                 loginDialog.setVisible(false);
                 mainFrame.setContacts(server.getUserContacts(message.getLogin()));
                 mainFrame.setUser(contact);
+                mainFrame.setFrameTitle(message.getLogin().toUpperCase() + " CHAT");
                 mainFrame.setVisible(true);
             } else {
                 loginDialog.loggingInFailed();

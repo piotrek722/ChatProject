@@ -23,7 +23,7 @@ public class LoginDialog extends JDialog {
     private DefaultEventDispatcher dispatcher;
 
     private static final int LOGIN_WIDTH = 300;
-    private static final int LOGIN_HEIGHT = 250;
+    private static final int LOGIN_HEIGHT = 260;
 
     public LoginDialog(DefaultEventDispatcher dispatcher) throws UnsupportedLookAndFeelException {
         UIManager.setLookAndFeel(new NimbusLookAndFeel());

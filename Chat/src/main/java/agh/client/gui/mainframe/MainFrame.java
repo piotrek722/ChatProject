@@ -27,7 +27,7 @@ public class MainFrame extends JFrame {
     private Map<Integer, ConversationFrame> conversationFrames;
 
     private static final Logger LOGGER = Logger.getLogger("Logger");
-    private static final int CLIENT_WIDTH = 200;
+    private static final int CLIENT_WIDTH = 240;
     private static final int CLIENT_HEIGHT = 500;
 
     public MainFrame(DefaultEventDispatcher dispatcher) throws UnsupportedLookAndFeelException {
@@ -132,6 +132,10 @@ public class MainFrame extends JFrame {
             this.contacts.addElement(contact);
         }
         sortJlist();
+    }
+
+    public void setFrameTitle(String title) {
+        this.setTitle(title);
     }
 
     private void sortJlist() {

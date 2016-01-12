@@ -25,7 +25,7 @@ public class RegisterDialog extends JDialog {
     private DefaultEventDispatcher dispatcher;
 
     private static final int REGISTER_WIDTH = 350;
-    private static final int REGISTER_HEIGHT = 300;
+    private static final int REGISTER_HEIGHT = 310;
 
     public RegisterDialog(DefaultEventDispatcher dispatcher) throws UnsupportedLookAndFeelException {
         this.dispatcher = dispatcher;

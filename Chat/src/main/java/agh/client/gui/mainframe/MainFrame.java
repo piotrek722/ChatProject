@@ -112,6 +112,8 @@ public class MainFrame extends JFrame {
                         contactJList.setSelectedIndex(index);
                     }
                     popupMenu.show(contactJList, e.getX(), e.getY());
+                } else if (e.getClickCount() == 2) {
+                    openConversationWindow();
                 }
             }
         });

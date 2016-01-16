@@ -1,0 +1,25 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+
+        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/test</property>
+        <property name="connection.username">root</property>
+        <property name="connection.password">root</property>
+        <!-- Echo all executed SQL to stdout -->
+        <property name="show_sql">false</property>
+
+        <!-- Drop and re-create the database schema at startup
+        <property name="hbm2ddl.auto">update</property> -->
+        <property name="hbm2ddl.auto">create</property>
+
+
+        <mapping class="agh.model.db.User"/>
+        <mapping class="agh.model.db.ContactList"/>
+        <mapping class="agh.model.db.Message"/>
+
+    </session-factory>
+</hibernate-configuration>

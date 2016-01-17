@@ -2,7 +2,10 @@ import agh.client.remoteobject.DefaultClient;
 import agh.model.db.ContactList;
 import agh.model.db.Message;
 import agh.model.db.User;
+import agh.model.simple.ClientMessage;
+import agh.model.simple.Conversation;
 import agh.model.simple.SimplifiedUser;
+import agh.model.simple.SimplifiedUserList;
 import agh.persistance.HibernateUtils;
 import agh.router.DefaultEventDispatcher;
 import agh.server.DefaultServer;
@@ -125,9 +128,34 @@ public class ServerTest {
         transaction.commit();
         session.close();
 
+        server.logout("User4");
+
     }
 
+    @Test
+    public void logoutUserTest() throws RemoteException {
 
+        server.registerClient("User5", "password", "Name", "LastName");
+        server.login(client,"User5","password");
+
+        Session session = HibernateUtils.getSession();
+        Transaction transaction = session.beginTransaction();
+
+        String command = "select u from User u where u.login like :login";
+        Query query = session.createQuery(command).setParameter("login", "User5");
+        List<User> found = query.list();
+
+
+        assertTrue(server.logout(found.get(0).getLogin()));
+        for (String user : server.getUsersOnline()) {
+            assertNotEquals(found.get(0).getLogin(),user);
+        }
+
+        transaction.commit();
+        session.close();
+    }
+
+    
 
     @Test
     public void addContactTest() throws RemoteException {
@@ -163,6 +191,7 @@ public class ServerTest {
 
         assertEquals(2,us.getContactList().getUserList().size());
 
+        server.logout("User7");
     }
 
     @Test
@@ -223,6 +252,7 @@ public class ServerTest {
 
         assertEquals(1,contactListNew.getUserList().size());
 
+        server.logout("User990");
 
     }
 
@@ -241,7 +271,9 @@ public class ServerTest {
 
         assertEquals(2,server.getContacts("User14").getUserList().size());
 
+        server.logout("User14");
     }
+
 
     @Test
     public void findUserTest() throws RemoteException {
@@ -282,6 +314,28 @@ public class ServerTest {
 
         transaction.commit();
         session.close();
+
+        server.logout("User20");
+        server.logout("User21");
+        server.logout("User22");
+    }
+
+
+    @Test
+    public void getUsersOnlineTest() throws RemoteException {
+
+        server.registerClient("User40", "password", "Name", "LastName");
+        server.registerClient("User41", "password", "Name", "LastName");
+
+        server.login(client,"User40","password");
+        server.login(client,"User41","password");
+
+        List<String> users = new ArrayList<>();
+        users.add("User40");
+        users.add("User41");
+
+        assertEquals(users,server.getUsersOnline());
+
     }
 
     @Test
@@ -307,5 +361,18 @@ public class ServerTest {
         session.close();
     }
 
+    @Test
+    public void changePasswordTest() throws RemoteException {
+        server.registerClient("User30", "password", "Name", "LastName");
 
+        server.login(client,"User30","password");
+
+        server.changePassword("User30","password","newpassword");
+
+        server.logout("User30");
+
+        assertNotNull(server.login(client,"User30","newpassword"));
+
+        server.logout("User30");
+    }
 }
